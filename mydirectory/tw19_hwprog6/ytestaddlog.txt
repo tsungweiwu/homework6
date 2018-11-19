@@ -1,6 +1,5 @@
 Main: Beginning execution
 Main: logfile 'ytestaddlog.txt
-enter Assemble
 BINARY LENGTH, WORDCOUNT 14 7
  READ ITEM  0:   -24571 ffffa005 1010000000000101
  READ ITEM  1:   -32762 ffff8006 1000000000000110
@@ -9,5 +8,4 @@ BINARY LENGTH, WORDCOUNT 14 7
  READ ITEM  4:    -8190 ffffe002 1110000000000010
  READ ITEM  5:        5 00000005 0000000000000101
  READ ITEM  6:        9 00000009 0000000000001001
-leave Assemble
 Main: Ending execution

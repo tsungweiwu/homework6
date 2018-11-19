@@ -1,6 +1,5 @@
 Main: Beginning execution
 Main: logfile 'yfiblog.txt
-enter Assemble
 BINARY LENGTH, WORDCOUNT 112 56
  READ ITEM  0:   -24553 ffffa017 1010000000010111
  READ ITEM  1:   -32741 ffff801b 1000000000011011
@@ -58,5 +57,4 @@ BINARY LENGTH, WORDCOUNT 112 56
  READ ITEM 53:      -52 ffffffcc 1111111111001100
  READ ITEM 54:      -52 ffffffcc 1111111111001100
  READ ITEM 55:      -52 ffffffcc 1111111111001100
-leave Assemble
 Main: Ending execution

@@ -1,5 +1,3 @@
 Main: Beginning execution
 Main: logfile 'xlog3.txt
-enter Assemble
-leave Assemble
 Main: Ending execution

@@ -1,6 +1,5 @@
 Main: Beginning execution
 Main: logfile 'xlog6.txt
-enter Assemble
 BINARY LENGTH, WORDCOUNT 128 64
  READ ITEM  0:   -24564 ffffa00c 1010000000001100
  READ ITEM  1:    16416 00004020 0100000000100000
@@ -66,5 +65,4 @@ BINARY LENGTH, WORDCOUNT 128 64
  READ ITEM 61:      -52 ffffffcc 1111111111001100
  READ ITEM 62:      -52 ffffffcc 1111111111001100
  READ ITEM 63:      -52 ffffffcc 1111111111001100
-leave Assemble
 Main: Ending execution

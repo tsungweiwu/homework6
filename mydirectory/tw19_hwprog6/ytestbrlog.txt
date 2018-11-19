@@ -1,6 +1,5 @@
 Main: Beginning execution
 Main: logfile 'ytestbrlog.txt
-enter Assemble
 BINARY LENGTH, WORDCOUNT 20 10
  READ ITEM  0:   -24568 ffffa008 1010000000001000
  READ ITEM  1:    -8189 ffffe003 1110000000000011
@@ -12,5 +11,4 @@ BINARY LENGTH, WORDCOUNT 20 10
  READ ITEM  7:    -8190 ffffe002 1110000000000010
  READ ITEM  8:        5 00000005 0000000000000101
  READ ITEM  9:        9 00000009 0000000000001001
-leave Assemble
 Main: Ending execution
