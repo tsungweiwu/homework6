@@ -1,0 +1,5 @@
+Main: Beginning execution
+Main: logfile 'ytestbanlog.txt
+enter Assemble
+leave Assemble
+Main: Ending execution

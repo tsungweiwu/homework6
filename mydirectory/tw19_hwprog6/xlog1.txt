@@ -1,0 +1,5 @@
+Main: Beginning execution
+Main: logfile 'xlog1.txt
+enter Assemble
+leave Assemble
+Main: Ending execution
