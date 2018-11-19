@@ -1,0 +1,9 @@
+Main: Beginning execution
+Main: logfile 'ylooplog.txt
+BINARY LENGTH, WORDCOUNT 10 5
+ READ ITEM  0:   -24572 ffffa004 1010000000000100
+ READ ITEM  1:    -8189 ffffe003 1110000000000011
+ READ ITEM  2:        0 00000000 0000000000000000
+ READ ITEM  3:    -8190 ffffe002 1110000000000010
+ READ ITEM  4:       -2 fffffffe 1111111111111110
+Main: Ending execution
