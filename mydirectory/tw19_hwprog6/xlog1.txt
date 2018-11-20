@@ -1,3 +1,0 @@
-Main: Beginning execution
-Main: logfile 'xlog1.txt
-Main: Ending execution

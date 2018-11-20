@@ -1,9 +1,0 @@
-Main: Beginning execution
-Main: logfile 'yreadwritelog.txt
-BINARY LENGTH, WORDCOUNT 10 5
- READ ITEM  0:    -8191 ffffe001 1110000000000001
- READ ITEM  1:    -8189 ffffe003 1110000000000011
- READ ITEM  2:    -8191 ffffe001 1110000000000001
- READ ITEM  3:    -8189 ffffe003 1110000000000011
- READ ITEM  4:    -8190 ffffe002 1110000000000010
-Main: Ending execution

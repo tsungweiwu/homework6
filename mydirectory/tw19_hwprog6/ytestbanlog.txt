@@ -1,3 +1,0 @@
-Main: Beginning execution
-Main: logfile 'ytestbanlog.txt
-Main: Ending execution
