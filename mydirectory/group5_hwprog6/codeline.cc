@@ -15,7 +15,33 @@ CodeLine::CodeLine() {
 }
 
 CodeLine::CodeLine(string code) {
+  
+  //cout << "test:" << code << endl;
   SetMachineCode(code);
+
+  if (code.length() < 21) {
+    code.append(21-code.length(), ' '); //pad to length 21, for easier code
+  }
+
+  if (code.substr(0,1)=="*") {
+    SetCommentsOnly(0,code);
+  } else {
+    if (code.substr(0,3) != "   ") {
+      label_ = code.substr(0,3);
+    } //if field is empty, value of label_ will be null
+    mnemonic_ = code.substr(4,3);
+    addr_ = code.substr(8,1);
+    if (code.substr(10,3) != "   ") {
+      symoperand_ = code.substr(10,3);
+    } //if field is empty, value of symoperand_ will be null
+    if (code.substr(14,5) != "     ") {
+      hex_ = Hex(code.substr(14,5));
+    }
+    if (code.substr(20,1) == "*") {
+      comments_ = code.substr(21);
+    }
+    is_all_comment_ = false;
+  }
 }
 //CodeLine::CodeLine(Globals globals) {
 //  globals_ = globals;
@@ -35,10 +61,7 @@ CodeLine::~CodeLine() {
  * Accessor for the 'addr_'.
 **/
 string CodeLine::GetAddr() const {
-  string returnvalue;
-
-  // code goes here
-  return returnvalue;
+  return addr_;
 }
 
 /***************************************************************************
@@ -94,16 +117,16 @@ string CodeLine::GetSymOperand() const {
  * Boolean indicator of the presence of a label.
 **/
 bool CodeLine::HasLabel() const {
-  bool something;
-  return something;
+  bool returnValue = !(label_.empty() || label_ == "   ");
+  return returnValue;
 }
 
 /***************************************************************************
  * Boolean indicator of the presence of a symbolic operand.
 **/
 bool CodeLine::HasSymOperand() const {
-  bool something;
-  return something;
+  bool returnValue = !(symoperand_.empty() || symoperand_ == "   ");
+  return returnValue;
 }
 
 /***************************************************************************
@@ -155,6 +178,8 @@ void CodeLine::SetCodeLine(int linecounter, int pc, string label,
  *   line - the code line that is taken to be all comments
 **/
 void CodeLine::SetCommentsOnly(int linecounter, string line) {
+  comments_ = line.substr(1); // assume asterisk was not stripped already
+  is_all_comment_ = true;
 }
 
 /***************************************************************************
