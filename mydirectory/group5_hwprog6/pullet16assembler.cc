@@ -44,15 +44,16 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
 #endif
 
 // Reading Ascii input
-  //while (in_scanner.HasNext()) {
+  pc_in_assembler_ = 0;
   CodeLine code_line;
   while (code_line.GetMnemonic() != "END") {
     string line = in_scanner.NextLine();
     code_line = CodeLine(line);
     codelines_.push_back(code_line);
+    pc_in_assembler_++;
   }
 
-  //PrintCodeLines();
+  // PrintCodeLines();
 
   for (unsigned int i = 0; i < codelines_.size(); ++i) {
     cout << codelines_.at(i).GetCode() << endl;
@@ -168,14 +169,17 @@ void Assembler::PassOne(Scanner& in_scanner) {
 #ifdef EBUG
   Utils::log_stream << "enter PassOne" << endl;
 #endif
-  /* Unfinished code -Sean
+   // Unfinished code -Sean
+  string lbl = "";
   for (auto it = codelines_.begin(); it != codelines_.end(); it++) {
-    if (it.HasLabel()) {
-      lbl = it.GetLabel();
-      if (symboltable_.find(lbl)
+    if ((*it).HasLabel()) {
+      lbl = (*it).GetLabel();
+      // if (symboltable_.find(lbl)) {
+
+      // }
     }
   }
-  */ 
+   
 #ifdef EBUG
   Utils::log_stream << "leave PassOne" << endl;
 #endif
@@ -206,7 +210,7 @@ void Assembler::PrintCodeLines() {
   string s = "";
 
   for (auto iter = codelines_.begin(); iter != codelines_.end(); ++iter) {
-    s += (*iter).ToString() + '\n';
+    cout << (*iter).ToString() << '\n';
   }
 
   if (!found_end_statement_) {
