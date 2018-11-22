@@ -44,11 +44,15 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
 #endif
 
 // Reading Ascii input
-  while (in_scanner.HasNext()) {
+  //while (in_scanner.HasNext()) {
+  CodeLine code_line;
+  while (code_line.GetMnemonic() != "END") {
     string line = in_scanner.NextLine();
-    CodeLine code_line = CodeLine(line);
+    code_line = CodeLine(line);
     codelines_.push_back(code_line);
   }
+
+  //PrintCodeLines();
 
   for (unsigned int i = 0; i < codelines_.size(); ++i) {
     cout << codelines_.at(i).GetCode() << endl;
@@ -94,7 +98,8 @@ vector<string> input_read_back;
   //////////////////////////////////////////////////////////////////////////
   // Pass one
   // Produce the symbol table and detect errors in symbols.
-
+  PassOne(in_scanner);
+  PrintSymbolTable();
   //////////////////////////////////////////////////////////////////////////
   // Pass two
   // Generate the machine code.
@@ -163,7 +168,14 @@ void Assembler::PassOne(Scanner& in_scanner) {
 #ifdef EBUG
   Utils::log_stream << "enter PassOne" << endl;
 #endif
-
+  /* Unfinished code -Sean
+  for (auto it = codelines_.begin(); it != codelines_.end(); it++) {
+    if (it.HasLabel()) {
+      lbl = it.GetLabel();
+      if (symboltable_.find(lbl)
+    }
+  }
+  */ 
 #ifdef EBUG
   Utils::log_stream << "leave PassOne" << endl;
 #endif
