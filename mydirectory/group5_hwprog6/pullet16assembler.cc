@@ -60,14 +60,15 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   }
 
 // Reading Binary File
-vector<string> input_read_back;
+  vector<string> input_read_back;
   std::ifstream input(binary_filename, std::ifstream::binary);
+  
   if (input) {
     input.seekg(0, input.end);
     int length = input.tellg();
     input.seekg(0, input.beg);
     Utils::log_stream << "BINARY LENGTH, WORDCOUNT " << length
-                        << " " << length/2 << endl;
+                      << " " << length/2 << endl;
 
     // Converted Binary to ascii
     char buffer[2];
