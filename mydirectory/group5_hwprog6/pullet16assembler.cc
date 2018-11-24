@@ -46,7 +46,7 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
 // Reading Ascii input
   pc_in_assembler_ = 0;
   CodeLine code_line;
-  while (code_line.GetMnemonic() != "END") {
+  while (code_line.GetMnemonic() != "END" && pc_in_assembler_ < 4096) {
     string line = in_scanner.NextLine();
     code_line = CodeLine(line);
     codelines_.push_back(code_line);
@@ -171,14 +171,28 @@ void Assembler::PassOne(Scanner& in_scanner) {
 #endif
    // Unfinished code -Sean
   string lbl = "";
+  pc_in_assembler_ = 0;
   for (auto it = codelines_.begin(); it != codelines_.end(); it++) {
+    if ((*it).IsAllComment()) {
+      continue;
+    }
     if ((*it).HasLabel()) {
       lbl = (*it).GetLabel();
-      // if (symboltable_.find(lbl)) {
-
-      // }
+      if (symboltable_.count(lbl) == 0) {
+        symboltable_.insert( {lbl, Symbol(lbl,pc_in_assembler_)} );
+      } else {
+        symboltable_.at(lbl).SetMultiply();
+      }
     }
-  }
+ 
+    if ((*it).GetMnemonic() == "ORG") {
+      pc_in_assembler_ = (*it).GetHexObject().GetValue();
+    } else if ((*it).GetMnemonic() == "DS ") {
+      pc_in_assembler_ += (*it).GetHexObject().GetValue();
+    } else {
+      pc_in_assembler_++;
+    }
+ }
    
 #ifdef EBUG
   Utils::log_stream << "leave PassOne" << endl;
@@ -250,6 +264,11 @@ void Assembler::PrintSymbolTable() {
   Utils::log_stream << "enter PrintSymbolTable" << endl;
 #endif
   string s = "";
+  cout << "SYMBOL TABLE\n    SYM LOC FLAGS\n";
+  for (std::pair<string, Symbol> it : symboltable_) {
+    cout << "SYM " << it.second.ToString() << endl;
+  }
+
 #ifdef EBUG
   Utils::log_stream << "leave PrintSymbolTable" << endl;
 #endif
