@@ -1,4 +1,13 @@
 Main: Beginning execution
 Main: logfile 'ytestbanlog.txt
 
+***** ERROR -- NO 'END' STATEMENT
+
+SYMBOL TABLE
+    SYM LOC FLAGS
+SYM A    11
+SYM LUP   9
+SYM ONE  10
+SYM TOP   1
+
 Main: Ending execution

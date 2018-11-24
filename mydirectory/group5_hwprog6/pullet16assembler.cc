@@ -53,12 +53,6 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
     pc_in_assembler_++;
   }
 
-  // PrintCodeLines();
-
-  for (unsigned int i = 0; i < codelines_.size(); ++i) {
-    cout << codelines_.at(i).GetCode() << endl;
-  }
-
 // Reading Binary File
   vector<string> input_read_back;
   std::ifstream input(binary_filename, std::ifstream::binary);
@@ -101,6 +95,7 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   // Pass one
   // Produce the symbol table and detect errors in symbols.
   PassOne(in_scanner);
+  PrintCodeLines();
   PrintSymbolTable();
   //////////////////////////////////////////////////////////////////////////
   // Pass two
@@ -265,9 +260,9 @@ void Assembler::PrintSymbolTable() {
   Utils::log_stream << "enter PrintSymbolTable" << endl;
 #endif
   string s = "";
-  cout << "SYMBOL TABLE\n    SYM LOC FLAGS\n";
+  Utils::log_stream << "SYMBOL TABLE\n    SYM LOC FLAGS\n";
   for (std::pair<string, Symbol> it : symboltable_) {
-    cout << "SYM " << it.second.ToString() << endl;
+    Utils::log_stream << "SYM " << it.second.ToString() << endl;
   }
 
 #ifdef EBUG

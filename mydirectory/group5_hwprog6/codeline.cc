@@ -13,34 +13,41 @@
 **/
 CodeLine::CodeLine() {
 }
-
-CodeLine::CodeLine(string code) {
-  
-  //cout << "test:" << code << endl;
-  SetMachineCode(code);
-
-  if (code.length() < 21) {
-    code.append(21-code.length(), ' '); //pad to length 21, for easier code
+int pc = 0;
+int linecounter = 0;
+CodeLine::CodeLine(string codeline) {
+  string mnemonic = "";
+  string label = "";
+  string addr = "";
+  string symoperand = "";
+  string hexoperand = "";
+  string comments = "";
+  string code = "";
+  if (codeline.length() < 21) {
+    codeline.append(21-codeline.length(), ' '); //pad to length 21, for easier code
   }
 
-  if (code.substr(0,1)=="*") {
-    SetCommentsOnly(0,code);
+  if (codeline.substr(0,1)=="*") {
+    SetCommentsOnly(linecounter,codeline);
+    linecounter++;
   } else {
-    if (code.substr(0,3) != "   ") {
-      label_ = code.substr(0,3);
+    if (codeline.substr(0,3) != "   ") {
+      label = codeline.substr(0,3);
     } //if field is empty, value of label_ will be null
-    mnemonic_ = code.substr(4,3);
-    addr_ = code.substr(8,1);
-    if (code.substr(10,3) != "   ") {
-      symoperand_ = code.substr(10,3);
+    mnemonic = codeline.substr(4,3);
+    addr = codeline.substr(8,1);
+    if (codeline.substr(10,3) != "   ") {
+      symoperand = codeline.substr(10,3);
     } //if field is empty, value of symoperand_ will be null
-    if (code.substr(14,5) != "     ") {
-      hex_ = Hex(code.substr(14,5));
+    if (codeline.substr(14,5) != "     ") {
+      hexoperand = codeline.substr(14,5);
     }
-    if (code.substr(20,1) == "*") {
-      comments_ = code.substr(21);
+    if (codeline.substr(20,1) == "*") {
+      comments = codeline.substr(20);
     }
-    is_all_comment_ = false;
+    SetCodeLine(linecounter, pc, label, mnemonic, addr, symoperand, hexoperand, comments, code);
+    pc++;
+    linecounter++;
   }
 }
 //CodeLine::CodeLine(Globals globals) {
@@ -178,7 +185,7 @@ void CodeLine::SetCodeLine(int linecounter, int pc, string label,
  *   line - the code line that is taken to be all comments
 **/
 void CodeLine::SetCommentsOnly(int linecounter, string line) {
-  comments_ = line.substr(1); // assume asterisk was not stripped already
+  comments_ = line; // assume asterisk was not stripped already
   is_all_comment_ = true;
 }
 
@@ -235,10 +242,7 @@ string CodeLine::ToString() const {
   if (code_ == "nullcode") {
     s += Utils::Format("xxxx xxxx xxxx xxxx", 19);
   } else {
-    s = s       + Utils::Format((code_).substr(0, 4), 4)
-          + " " + Utils::Format((code_).substr(4, 4), 4)
-          + " " + Utils::Format((code_).substr(8, 4), 4)
-          + " " + Utils::Format((code_).substr(12, 4), 4);
+    s += Utils::Format("xxxx xxxx xxxx xxxx", 19);
   }
 
   if (label_ == "nulllabel") {
@@ -265,7 +269,7 @@ string CodeLine::ToString() const {
     s += " " + Utils::Format(symoperand_, 3);
   }
 
-  if (hex_.IsNotNull()) {
+  if (hex_.IsNull()) {
     s += " " + Utils::Format(".....", 5);
   } else {
     s += " " + hex_.ToString();
