@@ -19,6 +19,9 @@ Symbol::Symbol() {
 **/
 Symbol::Symbol(string text, int programcounter) {
   // code goes here
+  text_ = text;
+  location_ = programcounter;
+  is_invalid_ = CheckInvalid();
 }
 
 /******************************************************************************
@@ -39,7 +42,7 @@ string Symbol::GetErrorMessages() const {
   string error_messages = "";
 
   return error_messages;
-}
+} // I wonder what this is for?
 
 /******************************************************************************
  * Accessor for the 'location_'.
@@ -72,10 +75,13 @@ void Symbol::SetMultiply() {
  * Returns the boolean to say whether a symbol is invalid.
 **/
 bool Symbol::CheckInvalid() const {
-  bool returnvalue = false;  // false means no, not invalid
-
-  // code goes here
-
+  bool returnvalue = true;  // false means no, not invalid
+  if ( isalpha(text_[0]) &&
+      (isalnum(text_[1]) || text_[1] == ' ') && 
+      (isalnum(text_[2]) || text_[2] == ' ')
+      ) {
+    returnvalue = false;
+  }
   return returnvalue;
 }
 
