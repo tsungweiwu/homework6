@@ -11,6 +11,7 @@ BINARY LENGTH, WORDCOUNT 20 10
  READ ITEM  7:    -8190 ffffe002 1110000000000010
  READ ITEM  8:        5 00000005 0000000000000101
  READ ITEM  9:        9 00000009 0000000000001001
+PASS ONE
     0                                           *23 567 9 123 56789 1
     1                                           *ll mmm a sss hhhhh * comment
     2    0  000000000000 1100 1100 1100 1100        LD    A   ..... * load the first addend 

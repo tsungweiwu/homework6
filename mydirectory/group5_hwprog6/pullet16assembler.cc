@@ -165,7 +165,8 @@ void Assembler::PassOne(Scanner& in_scanner) {
 #ifdef EBUG
   Utils::log_stream << "enter PassOne" << endl;
 #endif
-   // Unfinished code -Sean
+  Utils::log_stream << "PASS ONE" << endl;
+  // Unfinished code -Sean
   string lbl = "";
   pc_in_assembler_ = 0;
   for (auto it = codelines_.begin(); it != codelines_.end(); it++) {
@@ -203,6 +204,7 @@ void Assembler::PassTwo() {
 #ifdef EBUG
   Utils::log_stream << "enter PassTwo" << endl;
 #endif
+Utils::log_stream << "PASS TWO" << endl;
 
 #ifdef EBUG
   Utils::log_stream << "leave PassTwo" << endl;

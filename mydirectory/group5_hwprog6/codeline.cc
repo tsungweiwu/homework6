@@ -22,13 +22,15 @@ CodeLine::CodeLine(string codeline) {
   string symoperand = "";
   string hexoperand = "";
   string comments = "";
-  string code = "1100110011001100";
+  string code = "";
   if (codeline.length() < 21) {
     codeline.append(21-codeline.length(), ' '); //pad to length 21, for easier code
   }
 
   if (codeline.substr(0,1)=="*") {
     SetCommentsOnly(linecounter,codeline);
+    code = "nullcode";
+    SetMachineCode(code);
     linecounter++;
   } else {
     if (codeline.substr(0,3) != "   ") {
@@ -36,6 +38,7 @@ CodeLine::CodeLine(string codeline) {
     } //if field is empty, value of label_ will be null
     mnemonic = codeline.substr(4,3);
     addr = codeline.substr(8,1);
+    code = "1100110011001100";
     if (codeline.substr(10,3) != "   ") {
       symoperand = codeline.substr(10,3);
     } //if field is empty, value of symoperand_ will be null
@@ -243,7 +246,10 @@ string CodeLine::ToString() const {
   if (code_ == "nullcode") {
     s += Utils::Format("xxxx xxxx xxxx xxxx", 19);
   } else {
-    s += Utils::Format("1100 1100 1100 1100", 19);
+    s += Utils::Format(code_.substr(0,4), 4)
+      + " " + Utils::Format(code_.substr(4,4), 4)
+      + " " + Utils::Format(code_.substr(8,4), 4)
+      + " " + Utils::Format(code_.substr(12,4), 4);
     
   }
 

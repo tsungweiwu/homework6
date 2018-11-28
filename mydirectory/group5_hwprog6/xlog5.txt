@@ -18,24 +18,25 @@ BINARY LENGTH, WORDCOUNT 34 17
  READ ITEM 14:        0 00000000 0000000000000000
  READ ITEM 15:    15420 00003c3c 0011110000111100
  READ ITEM 16:    22102 00005656 0101011001010110
-    0    0  000000000000 xxxx xxxx xxxx xxxx RD     RD              
-    1    1  000000000001 xxxx xxxx xxxx xxxx        WRT             
-    2    2  000000000010 xxxx xxxx xxxx xxxx        STC   MEM       
-    3    3  000000000011 xxxx xxxx xxxx xxxx        LD    CON       
-    4    4  000000000100 xxxx xxxx xxxx xxxx LUP    ADD   MEM       
-    5    5  000000000101 xxxx xxxx xxxx xxxx        WRT             
-    6    6  000000000110 xxxx xxxx xxxx xxxx        BAN   LUP       
-    7    7  000000000111 xxxx xxxx xxxx xxxx        LD    ZER       
-    8    8  000000001000 xxxx xxxx xxxx xxxx        WRT             
-    9    9  000000001001 xxxx xxxx xxxx xxxx        LD    A1        
-   10   10  000000001010 xxxx xxxx xxxx xxxx        AND   A2        
-   11   11  000000001011 xxxx xxxx xxxx xxxx        STP             
-   12   12  000000001100 xxxx xxxx xxxx xxxx MEM    DS        +0001 
-   13   13  000000001101 xxxx xxxx xxxx xxxx CON    HEX       -0021 
-   14   14  000000001110 xxxx xxxx xxxx xxxx ZER    HEX       +0000 
-   15   15  000000001111 xxxx xxxx xxxx xxxx A1     HEX       +3C3C 
-   16   16  000000010000 xxxx xxxx xxxx xxxx A2     HEX       +5656 
-   17   17  000000010001 xxxx xxxx xxxx xxxx        END             
+PASS ONE
+    0    0  000000000000 1100 1100 1100 1100 RD     RD              
+    1    1  000000000001 1100 1100 1100 1100        WRT             
+    2    2  000000000010 1100 1100 1100 1100        STC   MEM       
+    3    3  000000000011 1100 1100 1100 1100        LD    CON       
+    4    4  000000000100 1100 1100 1100 1100 LUP    ADD   MEM       
+    5    5  000000000101 1100 1100 1100 1100        WRT             
+    6    6  000000000110 1100 1100 1100 1100        BAN   LUP       
+    7    7  000000000111 1100 1100 1100 1100        LD    ZER       
+    8    8  000000001000 1100 1100 1100 1100        WRT             
+    9    9  000000001001 1100 1100 1100 1100        LD    A1        
+   10   10  000000001010 1100 1100 1100 1100        AND   A2        
+   11   11  000000001011 1100 1100 1100 1100        STP             
+   12   12  000000001100 1100 1100 1100 1100 MEM    DS        +0001 
+   13   13  000000001101 1100 1100 1100 1100 CON    HEX       -0021 
+   14   14  000000001110 1100 1100 1100 1100 ZER    HEX       +0000 
+   15   15  000000001111 1100 1100 1100 1100 A1     HEX       +3C3C 
+   16   16  000000010000 1100 1100 1100 1100 A2     HEX       +5656 
+   17   17  000000010001 1100 1100 1100 1100        END             
 
 ***** ERROR -- NO 'END' STATEMENT
 
