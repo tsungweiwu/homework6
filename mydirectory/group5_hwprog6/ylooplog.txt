@@ -6,5 +6,21 @@ BINARY LENGTH, WORDCOUNT 10 5
  READ ITEM  2:        0 00000000 0000000000000000
  READ ITEM  3:    -8190 ffffe002 1110000000000010
  READ ITEM  4:       -2 fffffffe 1111111111111110
+    0                                           *23 567 9 123 56789 1
+    1                                           *ll mmm a sss hhhhh * comment
+    2    0  000000000000 xxxx xxxx xxxx xxxx TOP    LD    IDX ..... * load ACC with value at IDX
+    3    1  000000000001 xxxx xxxx xxxx xxxx        WRT             * write it
+    4    2  000000000010 xxxx xxxx xxxx xxxx        BAN   TOP       * store the new value
+    5    3  000000000011 xxxx xxxx xxxx xxxx        STP             
+    6                                           *                    
+    7    4  000000000100 xxxx xxxx xxxx xxxx IDX    HEX       -0002 * loop index
+    8    5  000000000101 xxxx xxxx xxxx xxxx        END             
+
+***** ERROR -- NO 'END' STATEMENT
+
+SYMBOL TABLE
+    SYM LOC FLAGS
+SYM IDX   4 MULTIPLY
+SYM TOP   0 MULTIPLY
 
 Main: Ending execution

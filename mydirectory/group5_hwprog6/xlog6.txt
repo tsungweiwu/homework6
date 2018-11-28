@@ -65,5 +65,36 @@ BINARY LENGTH, WORDCOUNT 128 64
  READ ITEM 61:      -52 ffffffcc 1111111111001100
  READ ITEM 62:      -52 ffffffcc 1111111111001100
  READ ITEM 63:      -52 ffffffcc 1111111111001100
+    0    0  000000000000 xxxx xxxx xxxx xxxx BEG    LD    XX        
+    1    1  000000000001 xxxx xxxx xxxx xxxx        STC   AAA       
+    2    2  000000000010 xxxx xxxx xxxx xxxx LUP    LD    N2        
+    3    3  000000000011 xxxx xxxx xxxx xxxx        ADD   N3        
+    4    4  000000000100 xxxx xxxx xxxx xxxx        STC   N2        
+    5    5  000000000101 xxxx xxxx xxxx xxxx        LD    N2        
+    6    6  000000000110 xxxx xxxx xxxx xxxx        WRT             
+    7    7  000000000111 xxxx xxxx xxxx xxxx        BAN   LUP       
+    8    8  000000001000 xxxx xxxx xxxx xxxx        STP             
+    9    9  000000001001 xxxx xxxx xxxx xxxx N1     HEX       +0002 
+   10   10  000000001010 xxxx xxxx xxxx xxxx N2     HEX       -0005 
+   11   11  000000001011 xxxx xxxx xxxx xxxx N3     HEX       +0001 
+   12   12  000000001100 xxxx xxxx xxxx xxxx XX     HEX       +0030 
+   13   13  000000001101 xxxx xxxx xxxx xxxx        ORG       +0020 
+   14   14  000000001110 xxxx xxxx xxxx xxxx AAA    DS        +0001 
+   15   15  000000001111 xxxx xxxx xxxx xxxx        ORG       +0030 
+   16   16  000000010000 xxxx xxxx xxxx xxxx MEM    DS        +0010 
+   17   17  000000010001 xxxx xxxx xxxx xxxx        END             
+
+***** ERROR -- NO 'END' STATEMENT
+
+SYMBOL TABLE
+    SYM LOC FLAGS
+SYM AAA  32 MULTIPLY
+SYM BEG   0 MULTIPLY
+SYM LUP   2 MULTIPLY
+SYM MEM  48 MULTIPLY
+SYM N1    9 MULTIPLY
+SYM N2   10 MULTIPLY
+SYM N3   11 MULTIPLY
+SYM XX   12 MULTIPLY
 
 Main: Ending execution

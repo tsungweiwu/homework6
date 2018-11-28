@@ -14,5 +14,29 @@ BINARY LENGTH, WORDCOUNT 26 13
  READ ITEM 10:    -4096 fffff000 1111000000000000
  READ ITEM 11:      -33 ffffffdf 1111111111011111
  READ ITEM 12:        0 00000000 0000000000000000
+    0    0  000000000000 xxxx xxxx xxxx xxxx RD     RD              
+    1    1  000000000001 xxxx xxxx xxxx xxxx        WRT             
+    2    2  000000000010 xxxx xxxx xxxx xxxx        STC   MEM       
+    3    3  000000000011 xxxx xxxx xxxx xxxx        LD    CON       
+    4    4  000000000100 xxxx xxxx xxxx xxxx LUP    ADD   MEM       
+    5    5  000000000101 xxxx xxxx xxxx xxxx        WRT             
+    6    6  000000000110 xxxx xxxx xxxx xxxx        BAN   LUP       
+    7    7  000000000111 xxxx xxxx xxxx xxxx        LD    ZER       
+    8    8  000000001000 xxxx xxxx xxxx xxxx        WRT             
+    9    9  000000001001 xxxx xxxx xxxx xxxx        STP             
+   10   10  000000001010 xxxx xxxx xxxx xxxx MEM    DS        +0001 
+   11   11  000000001011 xxxx xxxx xxxx xxxx CON    HEX       -0021 
+   12   12  000000001100 xxxx xxxx xxxx xxxx ZER    HEX       +0000 
+   13   13  000000001101 xxxx xxxx xxxx xxxx        END             
+
+***** ERROR -- NO 'END' STATEMENT
+
+SYMBOL TABLE
+    SYM LOC FLAGS
+SYM CON  11 MULTIPLY
+SYM LUP   4 MULTIPLY
+SYM MEM  10 MULTIPLY
+SYM RD    0 MULTIPLY
+SYM ZER  12 MULTIPLY
 
 Main: Ending execution

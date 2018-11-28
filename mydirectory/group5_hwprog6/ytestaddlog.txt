@@ -8,5 +8,17 @@ BINARY LENGTH, WORDCOUNT 14 7
  READ ITEM  4:    -8190 ffffe002 1110000000000010
  READ ITEM  5:        5 00000005 0000000000000101
  READ ITEM  6:        9 00000009 0000000000001001
+    0                                           *23 567 9 123 56789 1
+    1                                           *ll mmm a sss hhhhh * comment
+    2    0  000000000000 xxxx xxxx xxxx xxxx        LD    A   ..... * load the first addend 
+    3    1  000000000001 xxxx xxxx xxxx xxxx        ADD   B   ..... * add in the second addend
+    4    2  000000000010 xxxx xxxx xxxx xxxx        WRT       ..... * write the acc to output
+    5    3  000000000011 xxxx xxxx xxxx xxxx        STP             
+    6    4  000000000100 xxxx xxxx xxxx xxxx        END             
+
+***** ERROR -- NO 'END' STATEMENT
+
+SYMBOL TABLE
+    SYM LOC FLAGS
 
 Main: Ending execution

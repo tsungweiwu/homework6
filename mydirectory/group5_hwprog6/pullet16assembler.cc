@@ -220,7 +220,7 @@ void Assembler::PrintCodeLines() {
   string s = "";
 
   for (auto iter = codelines_.begin(); iter != codelines_.end(); ++iter) {
-    cout << (*iter).ToString() << '\n';
+    Utils::log_stream << (*iter).ToString() << '\n';
   }
 
   if (!found_end_statement_) {

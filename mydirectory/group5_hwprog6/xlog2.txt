@@ -1,4 +1,29 @@
 Main: Beginning execution
 Main: logfile 'xlog2.txt
+    0                                           *23456789012345678901
+    1    0  000000000000 xxxx xxxx xxxx xxxx AU     RD              
+    2    1  000000000001 xxxx xxxx xxxx xxxx        STC   M1        
+    3    2  000000000010 xxxx xxxx xxxx xxxx        SUB   CHK       
+    4    3  000000000011 xxxx xxxx xxxx xxxx        BAN   A1        
+    5    4  000000000100 xxxx xxxx xxxx xxxx 12A    ADD   M1        
+    6    5  000000000101 xxxx xxxx xxxx xxxx LP     STC   M2        
+    7    6  000000000110 xxxx xxxx xxxx xxxx        LD    CHK       
+    8    7  000000000111 xxxx xxxx xxxx xxxx LP     OR    M1        
+    9    8  000000001000 xxxx xxxx xxxx xxxx        WRT             
+   10    9  000000001001 xxxx xxxx xxxx xxxx        STP             
+   11   10  000000001010 xxxx xxxx xxxx xxxx M1     DS        +0003 * comment
+   12   11  000000001011 xxxx xxxx xxxx xxxx        ORG       +0044 * comment
+   13   12  000000001100 xxxx xxxx xxxx xxxx CHK    HEX       -004D * comment
+   14   13  000000001101 xxxx xxxx xxxx xxxx        END             
+
+***** ERROR -- NO 'END' STATEMENT
+
+SYMBOL TABLE
+    SYM LOC FLAGS
+SYM 12A   4 INVALID
+SYM AU    0
+SYM CHK  68
+SYM LP    5 MULTIPLY
+SYM M1   10
 
 Main: Ending execution

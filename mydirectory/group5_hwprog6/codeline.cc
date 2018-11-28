@@ -22,7 +22,7 @@ CodeLine::CodeLine(string codeline) {
   string symoperand = "";
   string hexoperand = "";
   string comments = "";
-  string code = "";
+  string code = "1100110011001100";
   if (codeline.length() < 21) {
     codeline.append(21-codeline.length(), ' '); //pad to length 21, for easier code
   }
@@ -187,6 +187,7 @@ void CodeLine::SetCodeLine(int linecounter, int pc, string label,
 void CodeLine::SetCommentsOnly(int linecounter, string line) {
   comments_ = line; // assume asterisk was not stripped already
   is_all_comment_ = true;
+  linecounter_ = linecounter;
 }
 
 /***************************************************************************
@@ -242,7 +243,8 @@ string CodeLine::ToString() const {
   if (code_ == "nullcode") {
     s += Utils::Format("xxxx xxxx xxxx xxxx", 19);
   } else {
-    s += Utils::Format("xxxx xxxx xxxx xxxx", 19);
+    s += Utils::Format("1100 1100 1100 1100", 19);
+    
   }
 
   if (label_ == "nulllabel") {
