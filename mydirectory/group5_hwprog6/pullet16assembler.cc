@@ -251,7 +251,16 @@ string bitstring = "";
           // TODO The symbol is not found in the symbol table (what do we do here??)
         }
       }
-      (*it).SetMachineCode(bitstring);
+      if(bitstring.length() < 16) {
+      // Basically a TEMPORARY hacky way of handling all the errors I haven't handled yet
+      // (like stuff like HEX, ORG, END, DS that I just haven't gotten around to generating machine code for
+      // and error cases like undefined/multiply defined/invalid symbols and opcodes) 
+      // Eventually when all of these cases are handled this block won't be needed and we can remove it 
+        (*it).SetMachineCode("0000000000000000");
+      }
+      else {
+        (*it).SetMachineCode(bitstring);
+      }
     }
   }
   #ifdef EBUG
