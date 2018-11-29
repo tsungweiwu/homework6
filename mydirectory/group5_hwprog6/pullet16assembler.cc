@@ -56,7 +56,7 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
 // Reading Binary File
   vector<string> input_read_back;
   std::ifstream input(binary_filename, std::ifstream::binary);
-  
+
   if (input) {
     input.seekg(0, input.end);
     int length = input.tellg();
@@ -100,7 +100,8 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   //////////////////////////////////////////////////////////////////////////
   // Pass two
   // Generate the machine code.
-
+  PassTwo();
+  PrintCodeLines();
   //////////////////////////////////////////////////////////////////////////
   // Dump the results.
 
@@ -181,7 +182,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
         symboltable_.at(lbl).SetMultiply();
       }
     }
- 
+
     if ((*it).GetMnemonic() == "ORG") {
       pc_in_assembler_ = (*it).GetHexObject().GetValue();
     } else if ((*it).GetMnemonic() == "DS ") {
@@ -190,7 +191,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
       pc_in_assembler_++;
     }
  }
-   
+
 #ifdef EBUG
   Utils::log_stream << "leave PassOne" << endl;
 #endif
@@ -205,10 +206,57 @@ void Assembler::PassTwo() {
   Utils::log_stream << "enter PassTwo" << endl;
 #endif
 Utils::log_stream << "PASS TWO" << endl;
-
-#ifdef EBUG
-  Utils::log_stream << "leave PassTwo" << endl;
-#endif
+string bitstring = "";
+// Note: this code does not handle HEX, ORG, DS, END correctly yet
+// This block goes through each of the inputted codelines and converts the
+// mnemonic, direct/indirect addressing, and 12 bit address to appropriate
+// machine code.
+  for (auto it = codelines_.begin(); it != codelines_.end(); it++) {
+    // The first block looks for the mnemonic in the map of opcodes, and converts
+    // to machine code accordingly.
+    if (!(*it).IsAllComment()) {
+      map <string, string>::iterator op_it = opcodes.find((*it).GetMnemonic());
+      if (op_it != opcodes.end()) {
+        bitstring = opcodes.find((*it).GetMnemonic())-> second;
+        // TODO do error flagging for if an opcode that isn't in the set of defined codes is found (ex: div)
+        // The second block looks for the asterisk to determine whether the 4th bit
+        // should be denoted as direct or indirect addressing.
+        if((*it).GetAddr() == "*") {
+          bitstring += "1";
+        }
+        else {
+          bitstring += "0";
+        }
+      // The third block finds the symbol operand in the symbol table if needed
+        map <string, Symbol>::iterator sym_it = symboltable_.find((*it).GetSymOperand());
+        Symbol symbol;
+        if (sym_it != symboltable_.end()) {
+          symbol = symboltable_.find((*it).GetSymOperand())-> second;
+          bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
+        }
+      // This block handles read, write, and stop, where no value from the symbol
+      // table is needed to set the last 12 bits.
+        else if (bitstring.substr(0,3) == "111") {
+          if ((*it).GetMnemonic() == "RD ") {
+            bitstring += "000000000001";
+          }
+          else if ((*it).GetMnemonic() == "STP") {
+            bitstring += "000000000010";
+          }
+          else if ((*it).GetMnemonic() == "WRT") {
+            bitstring += "000000000011";
+          }
+        }
+        else {
+          // TODO The symbol is not found in the symbol table (what do we do here??)
+        }
+      }
+      (*it).SetMachineCode(bitstring);
+    }
+  }
+  #ifdef EBUG
+    Utils::log_stream << "leave PassTwo" << endl;
+  #endif
 }
 
 /***************************************************************************

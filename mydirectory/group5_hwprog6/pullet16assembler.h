@@ -56,7 +56,17 @@ class Assembler {
   vector<CodeLine> codelines_;
   map<int, string> machinecode_;
   map<string, Symbol> symboltable_;
-  map<string, string> opcodes_;
+  map<string, string> opcodes = { {"BAN", "000"},
+                                  {"SUB", "001"},
+                                  {"STC", "010"},
+                                  {"AND", "011"},
+                                  {"ADD", "100"},
+                                  {"LD ", "101"},
+                                  {"BR ", "110"},
+                                  {"STP", "111"},
+                                  {"RD ", "111"},
+                                  {"WRT", "111"}
+                                };
   set<string> mnemonics_;
 
   string GetInvalidMessage(string leadingtext, string invalidstring);
