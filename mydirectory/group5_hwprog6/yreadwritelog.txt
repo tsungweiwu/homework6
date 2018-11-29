@@ -1,28 +1,34 @@
 Main: Beginning execution
 Main: logfile 'yreadwritelog.txt
 BINARY LENGTH, WORDCOUNT 10 5
- READ ITEM  0:    -8191 ffffe001 1110000000000001
- READ ITEM  1:    -8189 ffffe003 1110000000000011
- READ ITEM  2:    -8191 ffffe001 1110000000000001
- READ ITEM  3:    -8189 ffffe003 1110000000000011
- READ ITEM  4:    -8190 ffffe002 1110000000000010
 PASS ONE
-    0    0  000000000000 1100 1100 1100 1100        RD              
-    1    1  000000000001 1100 1100 1100 1100        WRT             
-    2    2  000000000010 1100 1100 1100 1100        RD              
-    3    3  000000000011 1100 1100 1100 1100        WRT             
-    4    4  000000000100 1100 1100 1100 1100        STP             
-    5    5  000000000101 1100 1100 1100 1100        END             
-
+LINE:nullcode
+    0    1  000000000001 xxxx xxxx xxxx xxxx ...    RD    ... .....
+LINE:nullcode
+    1    2  000000000010 xxxx xxxx xxxx xxxx ...    WRT   ... .....
+LINE:nullcode
+    2    3  000000000011 xxxx xxxx xxxx xxxx ...    RD    ... .....
+LINE:nullcode
+    3    4  000000000100 xxxx xxxx xxxx xxxx ...    WRT   ... .....
+LINE:nullcode
+    4    5  000000000101 xxxx xxxx xxxx xxxx ...    STP   ... .....
+LINE:nullcode
+    5    6  000000000110 xxxx xxxx xxxx xxxx ...    END   ... .....
 SYMBOL TABLE
     SYM LOC FLAGS
 
 PASS TWO
-    0    0  000000000000 1110 0000 0000 0001        RD              
-    1    1  000000000001 1110 0000 0000 0011        WRT             
-    2    2  000000000010 1110 0000 0000 0001        RD              
-    3    3  000000000011 1110 0000 0000 0011        WRT             
-    4    4  000000000100 1110 0000 0000 0010        STP             
-    5    5  000000000101 1110 0000 0000 0010        END             
+LINE:1110000000000001
+    0    1  000000000001 1110 0000 0000 0001 ...    RD    ... .....
+LINE:1110000000000011
+    1    2  000000000010 1110 0000 0000 0011 ...    WRT   ... .....
+LINE:1110000000000001
+    2    3  000000000011 1110 0000 0000 0001 ...    RD    ... .....
+LINE:1110000000000011
+    3    4  000000000100 1110 0000 0000 0011 ...    WRT   ... .....
+LINE:1110000000000010
+    4    5  000000000101 1110 0000 0000 0010 ...    STP   ... .....
+LINE:nullcode
+    5    6  000000000110 xxxx xxxx xxxx xxxx ...    END   ... .....
 
 Main: Ending execution

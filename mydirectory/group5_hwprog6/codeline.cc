@@ -13,45 +13,11 @@
 **/
 CodeLine::CodeLine() {
 }
+
 int pc = 0;
 int linecounter = 0;
-CodeLine::CodeLine(string codeline) {
-  string mnemonic = "";
-  string label = "";
-  string addr = "";
-  string symoperand = "";
-  string hexoperand = "";
-  string comments = "";
-  string code = "";
-  if (codeline.length() < 21) {
-    codeline.append(21-codeline.length(), ' '); //pad to length 21, for easier code
-  }
 
-  if (codeline.substr(0,1)=="*") {
-    SetCommentsOnly(linecounter,codeline);
-    code = "nullcode";
-    SetMachineCode(code);
-    linecounter++;
-  } else {
-    if (codeline.substr(0,3) != "   ") {
-      label = codeline.substr(0,3);
-    } //if field is empty, value of label_ will be null
-    mnemonic = codeline.substr(4,3);
-    addr = codeline.substr(8,1);
-    code = "1100110011001100";
-    if (codeline.substr(10,3) != "   ") {
-      symoperand = codeline.substr(10,3);
-    } //if field is empty, value of symoperand_ will be null
-    if (codeline.substr(14,5) != "     ") {
-      hexoperand = codeline.substr(14,5);
-    }
-    if (codeline.substr(20,1) == "*") {
-      comments = codeline.substr(20);
-    }
-    SetCodeLine(linecounter, pc, label, mnemonic, addr, symoperand, hexoperand, comments, code);
-    pc++;
-    linecounter++;
-  }
+CodeLine::CodeLine(string codeline) {
 }
 //CodeLine::CodeLine(Globals globals) {
 //  globals_ = globals;
@@ -116,6 +82,10 @@ string CodeLine::GetMnemonic() const {
   return mnemonic_;
 }
 
+string CodeLine::GetPC() const {
+  return std::to_string(pc_);
+}
+
 /***************************************************************************
  * Accessor for the 'symoperand_'.
 **/
@@ -127,7 +97,7 @@ string CodeLine::GetSymOperand() const {
  * Boolean indicator of the presence of a label.
 **/
 bool CodeLine::HasLabel() const {
-  bool returnValue = !(label_.empty() || label_ == "   ");
+  bool returnValue = !(label_.empty() || label_ == "nulllabel");
   return returnValue;
 }
 
@@ -135,7 +105,7 @@ bool CodeLine::HasLabel() const {
  * Boolean indicator of the presence of a symbolic operand.
 **/
 bool CodeLine::HasSymOperand() const {
-  bool returnValue = !(symoperand_.empty() || symoperand_ == "   ");
+  bool returnValue = !(symoperand_.empty() || symoperand_ == "nullsymoperand");
   return returnValue;
 }
 
@@ -222,6 +192,7 @@ void CodeLine::SetMachineCode(string code) {
  *   what - the value to set as the PC
 **/
 void CodeLine::SetPC(int what) {
+  pc_ = what;
 }
 
 /***************************************************************************
@@ -236,7 +207,7 @@ string CodeLine::ToString() const {
   Utils::log_stream << "enter ToString" << endl;
 #endif
   string s = "";
-
+  Utils::log_stream << "LINE:" << code_ << endl;
 
   s += Utils::Format(linecounter_, 5) + " ";
 

@@ -44,18 +44,49 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
 #endif
 
 // Reading Ascii input
-  pc_in_assembler_ = 0;
-  CodeLine code_line;
-  while (pc_in_assembler_ < 4096) {
+  int linecounter_ = 0;
+  CodeLine codeline;
+  while (linecounter_ < 4096) {
     string line = in_scanner.NextLine();
     if (line == "") { break; }
-    code_line = CodeLine(line);
-    codelines_.push_back(code_line);
-    if (code_line.GetMnemonic() == "END") {
+    codeline = CodeLine();
+
+    string mnemonic = "nullmnemonic";
+    string label = "nulllabel";
+    string addr = "";
+    string symoperand = "nullsymoperand";
+    string hexoperand = "";
+    string comments = "nullcomments";
+    string code = "nullcode";
+    if (line.length() < 21) {
+      line.append(21-line.length(), ' '); //pad to length 21, for easier code
+    }
+
+    if (line.substr(0,1)=="*") {
+      codeline.SetCommentsOnly(linecounter_,line);
+    } else {
+      if (line.substr(0,3) != "   ") {
+        label = line.substr(0,3);
+      } //if field is empty, value of label_ will be null
+      mnemonic = line.substr(4,3);
+      addr = line.substr(8,1);
+      if (line.substr(10,3) != "   ") {
+        symoperand = line.substr(10,3);
+      } //if field is empty, value of symoperand_ will be null
+      if (line.substr(14,5) != "     ") {
+        hexoperand = line.substr(14,5);
+      }
+      if (line.substr(20,1) == "*") {
+        comments = line.substr(20);
+      }
+      codeline.SetCodeLine(linecounter_, 0, label, mnemonic, addr, symoperand, hexoperand, comments, code);
+    }
+    codelines_.push_back(codeline);
+    if (codeline.GetMnemonic() == "END") {
       found_end_statement_ = true;
       break;
     }
-    pc_in_assembler_++;
+    linecounter_++;
   }
 
 // Reading Binary File
@@ -84,11 +115,11 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
       string converted_binary = DABnamespace::DecToBitString(valueread, 16);
       input_read_back.push_back(converted_binary);
 
-      Utils::log_stream << Utils::Format("READ ITEM", 10)
-      << Utils::Format(i, 3) << ": "
-      << Utils::Format(valueread, 8) << Utils::Format(sss.str(), 9)
-      << Utils::Format(converted_binary, 17)
-      << endl;
+      //Utils::log_stream << Utils::Format("READ ITEM", 10)
+      //<< Utils::Format(i, 3) << ": "
+      //<< Utils::Format(valueread, 8) << Utils::Format(sss.str(), 9)
+      //<< Utils::Format(converted_binary, 17)
+      //<< endl;
 
       // dumps it into output text file
       out_stream << input_read_back.at(i) << endl;
@@ -100,7 +131,7 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   // Pass one
   // Produce the symbol table and detect errors in symbols.
   PassOne(in_scanner);
-  PrintCodeLines();
+  //PrintCodeLines();
   PrintSymbolTable();
   //////////////////////////////////////////////////////////////////////////
   // Pass two
@@ -195,6 +226,8 @@ void Assembler::PassOne(Scanner& in_scanner) {
     } else {
       pc_in_assembler_++;
     }
+    (*it).SetPC(pc_in_assembler_);
+    Utils::log_stream << (*it).ToString() << '\n';
  }
 
 #ifdef EBUG
@@ -210,8 +243,8 @@ void Assembler::PassTwo() {
 #ifdef EBUG
   Utils::log_stream << "enter PassTwo" << endl;
 #endif
-Utils::log_stream << "PASS TWO" << endl;
-string bitstring = "";
+  Utils::log_stream << "PASS TWO" << endl;
+  string bitstring = "";
 // Note: this code does not handle HEX, ORG, DS, END correctly yet
 // This block goes through each of the inputted codelines and converts the
 // mnemonic, direct/indirect addressing, and 12 bit address to appropriate
@@ -232,16 +265,7 @@ string bitstring = "";
         else {
           bitstring += "0";
         }
-      // The third block finds the symbol operand in the symbol table if needed
-        map <string, Symbol>::iterator sym_it = symboltable_.find((*it).GetSymOperand());
-        Symbol symbol;
-        if (sym_it != symboltable_.end()) {
-          symbol = symboltable_.find((*it).GetSymOperand())-> second;
-          bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
-        }
-      // This block handles read, write, and stop, where no value from the symbol
-      // table is needed to set the last 12 bits.
-        else if (bitstring.substr(0,3) == "111") {
+        if (bitstring.substr(0,3) == "111") {
           if ((*it).GetMnemonic() == "RD ") {
             bitstring += "000000000001";
           }
@@ -253,24 +277,38 @@ string bitstring = "";
           }
         }
         else {
+        // The third block finds the symbol operand in the symbol table if needed
+          map <string, Symbol>::iterator sym_it = symboltable_.find((*it).GetSymOperand());
+          Symbol symbol;
+          if (sym_it != symboltable_.end()) {
+            symbol = symboltable_.find((*it).GetSymOperand())-> second;
+            bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
+          }
+      // This block handles read, write, and stop, where no value from the symbol
+      // table is needed to set the last 12 bits.
+          else {
           // TODO The symbol is not found in the symbol table (what do we do here??)
+            bitstring += "ERROR0000000";
+            Utils::log_stream << "ERROR at " << (*it).GetPC() << endl;
+          }
         }
-      }
-      if(bitstring.length() < 16) {
+        if(bitstring.length() < 16) {
       // Basically a TEMPORARY hacky way of handling all the errors I haven't handled yet
       // (like stuff like HEX, ORG, END, DS that I just haven't gotten around to generating machine code for
       // and error cases like undefined/multiply defined/invalid symbols and opcodes) 
       // Eventually when all of these cases are handled this block won't be needed and we can remove it 
-        (*it).SetMachineCode("0000000000000000");
-      }
-      else {
+          (*it).SetMachineCode("0000000000000000");
+        }
+        else {
         (*it).SetMachineCode(bitstring);
+        }
       }
     }
   }
   #ifdef EBUG
     Utils::log_stream << "leave PassTwo" << endl;
   #endif
+
 }
 
 /***************************************************************************

@@ -1,22 +1,30 @@
 Main: Beginning execution
 Main: logfile 'xlog3.txt
 PASS ONE
-    0                                           *23456789012345678901
-    1    0  000000000000 1100 1100 1100 1100 STR    RD              
-    2    1  000000000001 1100 1100 1100 1100        STC   A1        
-    3    2  000000000010 1100 1100 1100 1100 68     AND   B2        
-    4    3  000000000011 1100 1100 1100 1100        BAN   CHK       
-    5    4  000000000100 1100 1100 1100 1100        ORG       +0010 
-    6    5  000000000101 1100 1100 1100 1100 STR    LD    A1        
-    7    6  000000000110 1100 1100 1100 1100        DIV   90        
-    8    7  000000000111 1100 1100 1100 1100        ORG       -0011 
-    9    8  000000001000 1100 1100 1100 1100 A1     DS        +000A * comment
-   10    9  000000001001 1100 1100 1100 1100        DS        +0006 * comment
-   11   10  000000001010 1100 1100 1100 1100        HEX       +0A0U 
-   12   11  000000001011 1100 1100 1100 1100 B2     HEX       -001C * comment
-
-***** ERROR -- NO 'END' STATEMENT
-
+LINE:nullcode
+    1    1  000000000001 xxxx xxxx xxxx xxxx STR    RD    ... .....
+LINE:nullcode
+    2    2  000000000010 xxxx xxxx xxxx xxxx ...    STC   A1  .....
+LINE:nullcode
+    3    3  000000000011 xxxx xxxx xxxx xxxx 68     AND   B2  .....
+LINE:nullcode
+    4    4  000000000100 xxxx xxxx xxxx xxxx ...    BAN   CHK .....
+LINE:nullcode
+    5   16  000000010000 xxxx xxxx xxxx xxxx ...    ORG   ... +0010
+LINE:nullcode
+    6   17  000000010001 xxxx xxxx xxxx xxxx STR    LD    A1  .....
+LINE:nullcode
+    7   18  000000010010 xxxx xxxx xxxx xxxx ...    DIV   90  .....
+LINE:nullcode
+    8 65519  111111101111 xxxx xxxx xxxx xxxx ...    ORG   ... -0011
+LINE:nullcode
+    9 65529  111111111001 xxxx xxxx xxxx xxxx A1     DS    ... +000A * comment
+LINE:nullcode
+   10 65535  111111111111 xxxx xxxx xxxx xxxx ...    DS    ... +0006 * comment
+LINE:nullcode
+   11 65536  000000000000 xxxx xxxx xxxx xxxx ...    HEX   ... .....
+LINE:nullcode
+   12 65537  000000000001 xxxx xxxx xxxx xxxx B2     HEX   ... -001C * comment
 SYMBOL TABLE
     SYM LOC FLAGS
 SYM 68    2 INVALID
@@ -25,20 +33,5 @@ SYM B2 65536
 SYM STR   0 MULTIPLY
 
 PASS TWO
-    0                                           *23456789012345678901
-    1    0  000000000000 1110 0000 0000 0001 STR    RD              
-    2    1  000000000001 0100 1111 1110 1111        STC   A1        
-    3    2  000000000010 0110 0000 0000 0000 68     AND   B2        
-    4    3  000000000011 0000 0000 0000 0000        BAN   CHK       
-    5    4  000000000100 0000 0000 0000 0000        ORG       +0010 
-    6    5  000000000101 1010 1111 1110 1111 STR    LD    A1        
-    7    6  000000000110 1010 1111 1110 1111        DIV   90        
-    8    7  000000000111 1010 1111 1110 1111        ORG       -0011 
-    9    8  000000001000 1010 1111 1110 1111 A1     DS        +000A * comment
-   10    9  000000001001 1010 1111 1110 1111        DS        +0006 * comment
-   11   10  000000001010 1010 1111 1110 1111        HEX       +0A0U 
-   12   11  000000001011 1010 1111 1110 1111 B2     HEX       -001C * comment
-
-***** ERROR -- NO 'END' STATEMENT
-
-Main: Ending execution
+ERROR at 4
+LINE:

@@ -1,36 +1,23 @@
 Main: Beginning execution
 Main: logfile 'ylooplog.txt
 BINARY LENGTH, WORDCOUNT 10 5
- READ ITEM  0:   -24572 ffffa004 1010000000000100
- READ ITEM  1:    -8189 ffffe003 1110000000000011
- READ ITEM  2:        0 00000000 0000000000000000
- READ ITEM  3:    -8190 ffffe002 1110000000000010
- READ ITEM  4:       -2 fffffffe 1111111111111110
 PASS ONE
-    0                                           *23 567 9 123 56789 1
-    1                                           *ll mmm a sss hhhhh * comment
-    2    0  000000000000 1100 1100 1100 1100 TOP    LD    IDX       * load ACC with value at IDX
-    3    1  000000000001 1100 1100 1100 1100        WRT             * write it
-    4    2  000000000010 1100 1100 1100 1100        BAN   TOP       * store the new value
-    5    3  000000000011 1100 1100 1100 1100        STP             
-    6                                           *                    
-    7    4  000000000100 1100 1100 1100 1100 IDX    HEX       -0002 * loop index
-    8    5  000000000101 1100 1100 1100 1100        END             
-
+LINE:nullcode
+    2    1  000000000001 xxxx xxxx xxxx xxxx TOP    LD    IDX       * load ACC with value at IDX
+LINE:nullcode
+    3    2  000000000010 xxxx xxxx xxxx xxxx ...    WRT   ... ..... * write it
+LINE:nullcode
+    4    3  000000000011 xxxx xxxx xxxx xxxx ...    BAN   TOP       * store the new value
+LINE:nullcode
+    5    4  000000000100 xxxx xxxx xxxx xxxx ...    STP   ... .....
+LINE:nullcode
+    7    5  000000000101 xxxx xxxx xxxx xxxx IDX    HEX   ... -0002 * loop index
+LINE:nullcode
+    8    6  000000000110 xxxx xxxx xxxx xxxx ...    END   ... .....
 SYMBOL TABLE
     SYM LOC FLAGS
 SYM IDX   4
-SYM TOP   0
+SYM TOP   0 MULTIPLY
 
 PASS TWO
-    0                                           *23 567 9 123 56789 1
-    1                                           *ll mmm a sss hhhhh * comment
-    2    0  000000000000 1010 0000 0000 0100 TOP    LD    IDX       * load ACC with value at IDX
-    3    1  000000000001 1110 0000 0000 0011        WRT             * write it
-    4    2  000000000010 0000 0000 0000 0000        BAN   TOP       * store the new value
-    5    3  000000000011 1110 0000 0000 0010        STP             
-    6                                           *                    
-    7    4  000000000100 1110 0000 0000 0010 IDX    HEX       -0002 * loop index
-    8    5  000000000101 1110 0000 0000 0010        END             
-
-Main: Ending execution
+LINE:

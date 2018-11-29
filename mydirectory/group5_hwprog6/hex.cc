@@ -168,6 +168,7 @@ void Hex::ParseHexOperand() {
       value_ += value3 * 16;
       value_ += value2 * 16 * 16;
       value_ += value1 * 16 * 16 * 16;
+      is_null_ = false;
     }
 
     // Deal with the signum to convert neg values to 2s complement
