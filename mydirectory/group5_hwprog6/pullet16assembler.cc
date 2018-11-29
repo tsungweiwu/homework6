@@ -46,10 +46,15 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
 // Reading Ascii input
   pc_in_assembler_ = 0;
   CodeLine code_line;
-  while (code_line.GetMnemonic() != "END" && pc_in_assembler_ < 4096) {
+  while (pc_in_assembler_ < 4096) {
     string line = in_scanner.NextLine();
+    if (line == "") { break; }
     code_line = CodeLine(line);
     codelines_.push_back(code_line);
+    if (code_line.GetMnemonic() == "END") {
+      found_end_statement_ = true;
+      break;
+    }
     pc_in_assembler_++;
   }
 
