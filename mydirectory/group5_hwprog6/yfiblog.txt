@@ -1,115 +1,101 @@
 Main: Beginning execution
 Main: logfile 'yfiblog.txt
-enter Assemble
-enter PassOne
 PASS ONE
-leave PassOne
-enter PrintCodeLines
     0                                           *23 567 9 123 56789 1
     1                                           *ll mmm a sss hhhhh * comment
-    2    1  000000000001 1100 1100 1100 1100        LD    IDX ..... * load ACC with value at IDX
-    3    2  000000000010 1100 1100 1100 1100        ADD   STO ..... * add loop value to initial address
-    4    3  000000000011 1100 1100 1100 1100        STC   STO ..... * store that address at STO
+    2    0  000000000000 1100 1100 1100 1100        LD    IDX       * load ACC with value at IDX
+    3    1  000000000001 1100 1100 1100 1100        ADD   STO ..... * add loop value to initial address
+    4    2  000000000010 1100 1100 1100 1100        STC   STO ..... * store that address at STO
     5                                           *                    
-    6    4  000000000100 1100 1100 1100 1100 TOP    LD    BB1 ..... * load ACC with value at BB1
-    7    5  000000000101 1100 1100 1100 1100        STC   TMP ..... * store that value at TMP
-    8    6  000000000110 1100 1100 1100 1100        LD    BB1 ..... * reload ACC with value at BB1
-    9    7  000000000111 1100 1100 1100 1100        ADD   AA1 ..... * add in value at AA1
-   10    8  000000001000 1100 1100 1100 1100        WRT       ..... * write the new Fib number
-   11    9  000000001001 1100 1100 1100 1100        STC * STO ..... * store ACC where STO is pointing to
-   12   10  000000001010 1100 1100 1100 1100        LD  * STO ..... * load ACC from where STO is pointing to
-   13   11  000000001011 1100 1100 1100 1100        STC   BB1 ..... * store ACC where STO is pointing to
-   14   12  000000001100 1100 1100 1100 1100        LD    TMP ..... * load the old BB1 from TMP
-   15   13  000000001101 1100 1100 1100 1100        STC   AA1 ..... * store ACC where STO is pointing to
+    6    3  000000000011 1100 1100 1100 1100 TOP    LD    BB1 ..... * load ACC with value at BB1
+    7    4  000000000100 1100 1100 1100 1100        STC   TMP ..... * store that value at TMP
+    8    5  000000000101 1100 1100 1100 1100        LD    BB1 ..... * reload ACC with value at BB1
+    9    6  000000000110 1100 1100 1100 1100        ADD   AA1 ..... * add in value at AA1
+   10    7  000000000111 1100 1100 1100 1100        WRT       ..... * write the new Fib number
+   11    8  000000001000 1100 1100 1100 1100        STC * STO ..... * store ACC where STO is pointing to
+   12    9  000000001001 1100 1100 1100 1100        LD  * STO ..... * load ACC from where STO is pointing to
+   13   10  000000001010 1100 1100 1100 1100        STC   BB1 ..... * store ACC where STO is pointing to
+   14   11  000000001011 1100 1100 1100 1100        LD    TMP ..... * load the old BB1 from TMP
+   15   12  000000001100 1100 1100 1100 1100        STC   AA1 ..... * store ACC where STO is pointing to
    16                                           *                    
-   17   14  000000001110 1100 1100 1100 1100        LD    IDX ..... * reload ACC with the counter
-   18   15  000000001111 1100 1100 1100 1100        ADD   ONE ..... * increment counter
-   19   16  000000010000 1100 1100 1100 1100        STC   IDX ..... * store this new address at STO
-   20   17  000000010001 1100 1100 1100 1100        LD    STO ..... * load our pointer
-   21   18  000000010010 1100 1100 1100 1100        ADD   ONE ..... * increment by one
-   22   19  000000010011 1100 1100 1100 1100        STC   STO ..... * store it back
-   23   20  000000010100 1100 1100 1100 1100        LD    IDX ..... * reload ACC with the counter
-   24   21  000000010101 1100 1100 1100 1100        BAN   TOP ..... * loop until done
-   25   22  000000010110 1100 1100 1100 1100        STP       ..... 
+   17   13  000000001101 1100 1100 1100 1100        LD    IDX ..... * reload ACC with the counter
+   18   14  000000001110 1100 1100 1100 1100        ADD   ONE ..... * increment counter
+   19   15  000000001111 1100 1100 1100 1100        STC   IDX ..... * store this new address at STO
+   20   16  000000010000 1100 1100 1100 1100        LD    STO ..... * load our pointer
+   21   17  000000010001 1100 1100 1100 1100        ADD   ONE ..... * increment by one
+   22   18  000000010010 1100 1100 1100 1100        STC   STO ..... * store it back
+   23   19  000000010011 1100 1100 1100 1100        LD    IDX ..... * reload ACC with the counter
+   24   20  000000010100 1100 1100 1100 1100        BAN   TOP ..... * loop until done
+   25   21  000000010101 1100 1100 1100 1100        STP             
    26                                           *                    
-   27   23  000000010111 1100 1100 1100 1100 ONE    HEX       +0001 * we need a constant 1
-   28   24  000000011000 1100 1100 1100 1100 IDX    HEX       -0005 * loop index
-   29   25  000000011001 1100 1100 1100 1100 AA1    HEX       +0008 * smaller of two values to add 
-   30   26  000000011010 1100 1100 1100 1100 BB1    HEX       +000D * larger of two values to add
-   31   27  000000011011 1100 1100 1100 1100 TMP    DS        +0001 * temp storage
-   32   28  000000011100 1100 1100 1100 1100 STO    HEX       +0028 * address in SSS at which to store
-   33   40  000000101000 1100 1100 1100 1100        ORG       +0028 * set PC location for SSS at +0020 
-   34   56  000000111000 1100 1100 1100 1100 SSS    DS        +0010 
-   35   57  000000111001 1100 1100 1100 1100        END       ..... 
-leave PrintCodeLines
+   27   22  000000010110 1100 1100 1100 1100 ONE    HEX       +0001 * we need a constant 1
+   28   23  000000010111 1100 1100 1100 1100 IDX    HEX       -0005 * loop index
+   29   24  000000011000 1100 1100 1100 1100 AA1    HEX       +0008 * smaller of two values to add 
+   30   25  000000011001 1100 1100 1100 1100 BB1    HEX       +000D * larger of two values to add
+   31   26  000000011010 1100 1100 1100 1100 TMP    DS        +0001 * temp storage
+   32   27  000000011011 1100 1100 1100 1100 STO    HEX       +0028 * address in SSS at which to store
+   33   28  000000011100 1100 1100 1100 1100        ORG       +0028 * set PC location for SSS at +0020 
+   34   40  000000101000 1100 1100 1100 1100 SSS    DS        +0010 
+   35   56  000000111000 1100 1100 1100 1100        END             
 
-enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM AA1  24 MULTIPLY
-SYM BB1  25 MULTIPLY
-SYM IDX  23 MULTIPLY
-SYM ONE  22 MULTIPLY
-SYM SSS  40 MULTIPLY
-SYM STO  27 MULTIPLY
-SYM TMP  26 MULTIPLY
-SYM TOP   3 MULTIPLY
-leave PrintSymbolTable
+SYM AA1  24
+SYM BB1  25
+SYM IDX  23
+SYM ONE  22
+SYM SSS  40
+SYM STO  27
+SYM TMP  26
+SYM TOP   3
 
-enter PassTwo
 PASS TWO
-leave PassTwo
-enter PrintCodeLines
     0                                           *23 567 9 123 56789 1
     1                                           *ll mmm a sss hhhhh * comment
-    2    1  000000000001 1010 0000 0001 0111        LD    IDX ..... * load ACC with value at IDX
-    3    2  000000000010 1000 0000 0001 1011        ADD   STO ..... * add loop value to initial address
-    4    3  000000000011 0100 0000 0001 1011        STC   STO ..... * store that address at STO
+    2    0  000000000000 1010 0000 0001 0111        LD    IDX       * load ACC with value at IDX
+    3    1  000000000001 1000 0000 0001 1011        ADD   STO ..... * add loop value to initial address
+    4    2  000000000010 0100 0000 0001 1011        STC   STO ..... * store that address at STO
     5                                           *                    
-    6    4  000000000100 1010 0000 0001 1001 TOP    LD    BB1 ..... * load ACC with value at BB1
-    7    5  000000000101 0100 0000 0001 1010        STC   TMP ..... * store that value at TMP
-    8    6  000000000110 1010 0000 0001 1001        LD    BB1 ..... * reload ACC with value at BB1
-    9    7  000000000111 1000 0000 0001 1000        ADD   AA1 ..... * add in value at AA1
-   10    8  000000001000 1110 0000 0000 0011        WRT       ..... * write the new Fib number
-   11    9  000000001001 0101 0000 0001 1011        STC * STO ..... * store ACC where STO is pointing to
-   12   10  000000001010 1011 0000 0001 1011        LD  * STO ..... * load ACC from where STO is pointing to
-   13   11  000000001011 0100 0000 0001 1001        STC   BB1 ..... * store ACC where STO is pointing to
-   14   12  000000001100 1010 0000 0001 1010        LD    TMP ..... * load the old BB1 from TMP
-   15   13  000000001101 0100 0000 0001 1000        STC   AA1 ..... * store ACC where STO is pointing to
+    6    3  000000000011 1010 0000 0001 1001 TOP    LD    BB1 ..... * load ACC with value at BB1
+    7    4  000000000100 0100 0000 0001 1010        STC   TMP ..... * store that value at TMP
+    8    5  000000000101 1010 0000 0001 1001        LD    BB1 ..... * reload ACC with value at BB1
+    9    6  000000000110 1000 0000 0001 1000        ADD   AA1 ..... * add in value at AA1
+   10    7  000000000111 1110 0000 0000 0011        WRT       ..... * write the new Fib number
+   11    8  000000001000 0101 0000 0001 1011        STC * STO ..... * store ACC where STO is pointing to
+   12    9  000000001001 1011 0000 0001 1011        LD  * STO ..... * load ACC from where STO is pointing to
+   13   10  000000001010 0100 0000 0001 1001        STC   BB1 ..... * store ACC where STO is pointing to
+   14   11  000000001011 1010 0000 0001 1010        LD    TMP ..... * load the old BB1 from TMP
+   15   12  000000001100 0100 0000 0001 1000        STC   AA1 ..... * store ACC where STO is pointing to
    16                                           *                    
-   17   14  000000001110 1010 0000 0001 0111        LD    IDX ..... * reload ACC with the counter
-   18   15  000000001111 1000 0000 0001 0110        ADD   ONE ..... * increment counter
-   19   16  000000010000 0100 0000 0001 0111        STC   IDX ..... * store this new address at STO
-   20   17  000000010001 1010 0000 0001 1011        LD    STO ..... * load our pointer
-   21   18  000000010010 1000 0000 0001 0110        ADD   ONE ..... * increment by one
-   22   19  000000010011 0100 0000 0001 1011        STC   STO ..... * store it back
-   23   20  000000010100 1010 0000 0001 0111        LD    IDX ..... * reload ACC with the counter
-   24   21  000000010101 0000 0000 0000 0011        BAN   TOP ..... * loop until done
-   25   22  000000010110 1110 0000 0000 0010        STP       ..... 
+   17   13  000000001101 1010 0000 0001 0111        LD    IDX ..... * reload ACC with the counter
+   18   14  000000001110 1000 0000 0001 0110        ADD   ONE ..... * increment counter
+   19   15  000000001111 0100 0000 0001 0111        STC   IDX ..... * store this new address at STO
+   20   16  000000010000 1010 0000 0001 1011        LD    STO ..... * load our pointer
+   21   17  000000010001 1000 0000 0001 0110        ADD   ONE ..... * increment by one
+   22   18  000000010010 0100 0000 0001 1011        STC   STO ..... * store it back
+   23   19  000000010011 1010 0000 0001 0111        LD    IDX ..... * reload ACC with the counter
+   24   20  000000010100 0000 0000 0000 0011        BAN   TOP ..... * loop until done
+   25   21  000000010101 1110 0000 0000 0010        STP             
    26                                           *                    
-   27   23  000000010111 1100 1100 1100 1100 ONE    HEX       +0001 * we need a constant 1
-   28   24  000000011000 1100 1100 1100 1100 IDX    HEX       -0005 * loop index
-   29   25  000000011001 1100 1100 1100 1100 AA1    HEX       +0008 * smaller of two values to add 
-   30   26  000000011010 1100 1100 1100 1100 BB1    HEX       +000D * larger of two values to add
-   31   27  000000011011 1100 1100 1100 1100 TMP    DS        +0001 * temp storage
-   32   28  000000011100 1100 1100 1100 1100 STO    HEX       +0028 * address in SSS at which to store
-   33   40  000000101000 1100 1100 1100 1100        ORG       +0028 * set PC location for SSS at +0020 
-   34   56  000000111000 1100 1100 1100 1100 SSS    DS        +0010 
-   35   57  000000111001 1100 1100 1100 1100        END       ..... 
-leave PrintCodeLines
+   27   22  000000010110 1100 1100 1100 1100 ONE    HEX       +0001 * we need a constant 1
+   28   23  000000010111 1100 1100 1100 1100 IDX    HEX       -0005 * loop index
+   29   24  000000011000 1100 1100 1100 1100 AA1    HEX       +0008 * smaller of two values to add 
+   30   25  000000011001 1100 1100 1100 1100 BB1    HEX       +000D * larger of two values to add
+   31   26  000000011010 1100 1100 1100 1100 TMP    DS        +0001 * temp storage
+   32   27  000000011011 1100 1100 1100 1100 STO    HEX       +0028 * address in SSS at which to store
+   33   28  000000011100 1100 1100 1100 1100        ORG       +0028 * set PC location for SSS at +0020 
+   34   40  000000101000 1100 1100 1100 1100 SSS    DS        +0010 
+   35   56  000000111000 1100 1100 1100 1100        END             
 
-enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM AA1  24 MULTIPLY
-SYM BB1  25 MULTIPLY
-SYM IDX  23 MULTIPLY
-SYM ONE  22 MULTIPLY
-SYM SSS  40 MULTIPLY
-SYM STO  27 MULTIPLY
-SYM TMP  26 MULTIPLY
-SYM TOP   3 MULTIPLY
-leave PrintSymbolTable
+SYM AA1  24
+SYM BB1  25
+SYM IDX  23
+SYM ONE  22
+SYM SSS  40
+SYM STO  27
+SYM TMP  26
+SYM TOP   3
 
-leave Assemble
 Main: Ending execution

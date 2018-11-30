@@ -51,35 +51,36 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
     codeline = CodeLine();
     string mnemonic, label, addr, symoperand, hexoperand, comments, code;
     if (line.length() < 21) {
-      line.append(21-line.length(), ' '); //pad to length 21, for easier code
+      line.append(21-line.length(), ' ');  // pad to length 21, for easier code
     }
 
-    if (line.substr(0,1)=="*") {
-      codeline.SetCommentsOnly(linecounter_,line);
+    if (line.substr(0, 1) == "*") {
+      codeline.SetCommentsOnly(linecounter_, line);
       code = "nullcode";
       codeline.SetMachineCode(code);
     } else {
-      if (line.substr(0,3) != "   ") {
-        label = line.substr(0,3);
-      } //if field is empty, value of label_ will be null
-      mnemonic = line.substr(4,3);
-      addr = line.substr(8,1);
-      if (line.substr(10,3) != "   ") {
-        symoperand = line.substr(10,3);
-      } //if field is empty, value of symoperand_ will be null
-      if (line.substr(14,5) != "     ") {
-        hexoperand = line.substr(14,5);
+      if (line.substr(0, 3) != "   ") {
+        label = line.substr(0, 3);
+      }  // if field is empty, value of label_ will be null
+      mnemonic = line.substr(4, 3);
+      addr = line.substr(8, 1);
+      if (line.substr(10, 3) != "   ") {
+        symoperand = line.substr(10, 3);
+      }  // if field is empty, value of symoperand_ will be null
+      if (line.substr(14, 5) != "     ") {
+        hexoperand = line.substr(14, 5);
       }
-      if (line.substr(20,1) == "*") {
+      if (line.substr(20, 1) == "*") {
         comments = line.substr(20);
       }
-      codeline.SetCodeLine(linecounter_, pc_in_assembler_, label, mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
+      codeline.SetCodeLine(linecounter_, pc_in_assembler_, label,
+      mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
     }
     codelines_.push_back(codeline);
     if (codeline.GetMnemonic() == "END") {
       found_end_statement_ = true;
     }
-    linecounter_++; 
+    linecounter_++;
     line = in_scanner.NextLine();
   }
 
@@ -170,7 +171,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
     if ((*it).HasLabel()) {
       lbl = (*it).GetLabel();
       if (symboltable_.count(lbl) == 0) {
-        symboltable_.insert( {lbl, Symbol(lbl,pc_in_assembler_)} );
+        symboltable_.insert({lbl, Symbol(lbl, pc_in_assembler_)});
       } else {
         symboltable_.at(lbl).SetMultiply();
       }
@@ -184,7 +185,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
     } else {
       pc_in_assembler_++;
     }
- }
+}
 
 #ifdef EBUG
   Utils::log_stream << "leave PassOne" << endl;
@@ -206,57 +207,60 @@ void Assembler::PassTwo() {
 // mnemonic, direct/indirect addressing, and 12 bit address to appropriate
 // machine code.
   for (auto it = codelines_.begin(); it != codelines_.end(); it++) {
-    // The first block looks for the mnemonic in the map of opcodes, and converts
-    // to machine code accordingly.
+    // The first block looks for the mnemonic in the map
+    // of opcodes, and converts to machine code accordingly.
     if (!(*it).IsAllComment()) {
       map <string, string>::iterator op_it = opcodes.find((*it).GetMnemonic());
       if (op_it != opcodes.end()) {
         bitstring = opcodes.find((*it).GetMnemonic())-> second;
-        // TODO do error flagging for if an opcode that isn't in the set of defined codes is found (ex: div)
-        // The second block looks for the asterisk to determine whether the 4th bit
+        // to do error flagging for if an opcode
+        // that isn't in the set of defined codes is found (ex: div)
+        // The second block looks for the
+        // asterisk to determine whether the 4th bit
         // should be denoted as direct or indirect addressing.
-        if((*it).GetAddr() == "*") {
+        if ((*it).GetAddr() == "*") {
           bitstring += "1";
-        }
-        else {
+        } else {
           bitstring += "0";
         }
-        if (bitstring.substr(0,3) == "111") {
+        if (bitstring.substr(0, 3) == "111") {
           if ((*it).GetMnemonic() == "RD ") {
             bitstring += "000000000001";
-          }
-          else if ((*it).GetMnemonic() == "STP") {
+          } else if ((*it).GetMnemonic() == "STP") {
             bitstring += "000000000010";
-          }
-          else if ((*it).GetMnemonic() == "WRT") {
+          } else if ((*it).GetMnemonic() == "WRT") {
             bitstring += "000000000011";
           }
-        }
-        else {
-        // The third block finds the symbol operand in the symbol table if needed
-          map <string, Symbol>::iterator sym_it = symboltable_.find((*it).GetSymOperand());
+        } else {
+        // The third block finds the symbol
+        // operand in the symbol table if needed
+          map <string, Symbol>::iterator sym_it = symboltable_.find(
+                                                  (*it).GetSymOperand());
           Symbol symbol;
           if (sym_it != symboltable_.end()) {
             symbol = symboltable_.find((*it).GetSymOperand())-> second;
             bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
-          }
-      // This block handles read, write, and stop, where no value from the symbol
-      // table is needed to set the last 12 bits.
-          else {
-          // TODO The symbol is not found in the symbol table (what do we do here??)
+          } else {
+          // This block handles read, write, and stop,
+          // where no value from the symbol
+          // table is needed to set the last 12 bits.
+          // to do The symbol is not found in the symbol table
             bitstring += "ERROR0000000";
             Utils::log_stream << "ERROR at " << (*it).GetPC() << endl;
           }
         }
-        if(bitstring.length() < 16) {
-      // Basically a TEMPORARY hacky way of handling all the errors I haven't handled yet
-      // (like stuff like HEX, ORG, END, DS that I just haven't gotten around to generating machine code for
-      // and error cases like undefined/multiply defined/invalid symbols and opcodes) 
-      // Eventually when all of these cases are handled this block won't be needed and we can remove it 
+        if (bitstring.length() < 16) {
+      // Basically a TEMPORARY hacky way of
+      // handling all the errors I haven't handled yet
+      // (like stuff like HEX, ORG, END, DS that
+      // I just haven't gotten around to generating machine code for
+      // and error cases like undefined/multiply
+      // defined/invalid symbols and opcodes)
+      // Eventually when all of these cases are handled
+      // this block won't be needed and we can remove it
           (*it).SetMachineCode("0000000000000000");
-        }
-        else {
-        (*it).SetMachineCode(bitstring);
+        } else {
+          (*it).SetMachineCode(bitstring);
         }
       }
     }
@@ -264,7 +268,6 @@ void Assembler::PassTwo() {
   #ifdef EBUG
     Utils::log_stream << "leave PassTwo" << endl;
   #endif
-
 }
 
 /***************************************************************************

@@ -1,69 +1,55 @@
 Main: Beginning execution
 Main: logfile 'xlog2.txt
-enter Assemble
-enter PassOne
 PASS ONE
-leave PassOne
-enter PrintCodeLines
     0                                           *23456789012345678901
-    1    1  000000000001 1100 1100 1100 1100 AU     RD        ..... 
-    2    2  000000000010 1100 1100 1100 1100        STC   M1  ..... 
-    3    3  000000000011 1100 1100 1100 1100        SUB   CHK ..... 
-    4    4  000000000100 1100 1100 1100 1100        BAN   A1  ..... 
-    5    5  000000000101 1100 1100 1100 1100 12A    ADD   M1  ..... 
-    6    6  000000000110 1100 1100 1100 1100 LP     STC   M2  ..... 
-    7    7  000000000111 1100 1100 1100 1100        LD    CHK ..... 
-    8    8  000000001000 1100 1100 1100 1100 LP     OR    M1  ..... 
-    9    9  000000001001 1100 1100 1100 1100        WRT       ..... 
-   10   10  000000001010 1100 1100 1100 1100        STP       ..... 
-   11   13  000000001101 1100 1100 1100 1100 M1     DS        +0003 * comment
-   12   68  000001000100 1100 1100 1100 1100        ORG       +0044 * comment
-   13   69  000001000101 1100 1100 1100 1100 CHK    HEX       -004D * comment
-   14   70  000001000110 1100 1100 1100 1100        END       ..... 
-leave PrintCodeLines
+    1    0  000000000000 1100 1100 1100 1100 AU     RD              
+    2    1  000000000001 1100 1100 1100 1100        STC   M1        
+    3    2  000000000010 1100 1100 1100 1100        SUB   CHK       
+    4    3  000000000011 1100 1100 1100 1100        BAN   A1        
+    5    4  000000000100 1100 1100 1100 1100 12A    ADD   M1        
+    6    5  000000000101 1100 1100 1100 1100 LP     STC   M2        
+    7    6  000000000110 1100 1100 1100 1100        LD    CHK       
+    8    7  000000000111 1100 1100 1100 1100 LP     OR    M1        
+    9    8  000000001000 1100 1100 1100 1100        WRT             
+   10    9  000000001001 1100 1100 1100 1100        STP             
+   11   10  000000001010 1100 1100 1100 1100 M1     DS        +0003 * comment
+   12   13  000000001101 1100 1100 1100 1100        ORG       +0044 * comment
+   13   68  000001000100 1100 1100 1100 1100 CHK    HEX       -004D * comment
+   14   69  000001000101 1100 1100 1100 1100        END             
 
-enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM 12A   4 INVALID MULTIPLY
-SYM AU    0 MULTIPLY
-SYM CHK  68 MULTIPLY
+SYM 12A   4 INVALID
+SYM AU    0
+SYM CHK  68
 SYM LP    5 MULTIPLY
-SYM M1   10 MULTIPLY
-leave PrintSymbolTable
+SYM M1   10
 
-enter PassTwo
 PASS TWO
-ERROR at 4
-ERROR at 6
-leave PassTwo
-enter PrintCodeLines
+ERROR at 3
+ERROR at 5
     0                                           *23456789012345678901
-    1    1  000000000001 1110 0000 0000 0001 AU     RD        ..... 
-    2    2  000000000010 0100 0000 0000 1010        STC   M1  ..... 
-    3    3  000000000011 0010 0000 0100 0100        SUB   CHK ..... 
-    4    4  000000000100 0000 ERRO R000 0000        BAN   A1  ..... 
-    5    5  000000000101 1000 0000 0000 1010 12A    ADD   M1  ..... 
-    6    6  000000000110 0100 ERRO R000 0000 LP     STC   M2  ..... 
-    7    7  000000000111 1010 0000 0100 0100        LD    CHK ..... 
-    8    8  000000001000 1100 1100 1100 1100 LP     OR    M1  ..... 
-    9    9  000000001001 1110 0000 0000 0011        WRT       ..... 
-   10   10  000000001010 1110 0000 0000 0010        STP       ..... 
-   11   13  000000001101 1100 1100 1100 1100 M1     DS        +0003 * comment
-   12   68  000001000100 1100 1100 1100 1100        ORG       +0044 * comment
-   13   69  000001000101 1100 1100 1100 1100 CHK    HEX       -004D * comment
-   14   70  000001000110 1100 1100 1100 1100        END       ..... 
-leave PrintCodeLines
+    1    0  000000000000 1110 0000 0000 0001 AU     RD              
+    2    1  000000000001 0100 0000 0000 1010        STC   M1        
+    3    2  000000000010 0010 0000 0100 0100        SUB   CHK       
+    4    3  000000000011 0000 ERRO R000 0000        BAN   A1        
+    5    4  000000000100 1000 0000 0000 1010 12A    ADD   M1        
+    6    5  000000000101 0100 ERRO R000 0000 LP     STC   M2        
+    7    6  000000000110 1010 0000 0100 0100        LD    CHK       
+    8    7  000000000111 1100 1100 1100 1100 LP     OR    M1        
+    9    8  000000001000 1110 0000 0000 0011        WRT             
+   10    9  000000001001 1110 0000 0000 0010        STP             
+   11   10  000000001010 1100 1100 1100 1100 M1     DS        +0003 * comment
+   12   13  000000001101 1100 1100 1100 1100        ORG       +0044 * comment
+   13   68  000001000100 1100 1100 1100 1100 CHK    HEX       -004D * comment
+   14   69  000001000101 1100 1100 1100 1100        END             
 
-enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM 12A   4 INVALID MULTIPLY
-SYM AU    0 MULTIPLY
-SYM CHK  68 MULTIPLY
+SYM 12A   4 INVALID
+SYM AU    0
+SYM CHK  68
 SYM LP    5 MULTIPLY
-SYM M1   10 MULTIPLY
-leave PrintSymbolTable
+SYM M1   10
 
-leave Assemble
 Main: Ending execution

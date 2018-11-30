@@ -1,43 +1,37 @@
 Main: Beginning execution
 Main: logfile 'ytestaddlog.txt
-enter Assemble
-enter PassOne
 PASS ONE
-leave PassOne
-enter PrintCodeLines
     0                                           *23 567 9 123 56789 1
     1                                           *ll mmm a sss hhhhh * comment
-    2    1  000000000001 1100 1100 1100 1100        LD    A   ..... * load the first addend 
-    3    2  000000000010 1100 1100 1100 1100        ADD   B   ..... * add in the second addend
-    4    3  000000000011 1100 1100 1100 1100        WRT       ..... * write the acc to output
-    5    4  000000000100 1100 1100 1100 1100        STP       ..... 
-    6    5  000000000101 1100 1100 1100 1100        END       ..... 
-leave PrintCodeLines
+    2    0  000000000000 1100 1100 1100 1100        LD    A         * load the first addend 
+    3    1  000000000001 1100 1100 1100 1100        ADD   B   ..... * add in the second addend
+    4    2  000000000010 1100 1100 1100 1100        WRT             * write the acc to output
+    5    3  000000000011 1100 1100 1100 1100        STP             
+    6    4  000000000100 1100 1100 1100 1100        END             
+    7                                           *                    
+    8    5  000000000101 1100 1100 1100 1100 A      HEX       +0005 
+    9    6  000000000110 1100 1100 1100 1100 B      HEX       +0009 
 
-enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
-leave PrintSymbolTable
+SYM A     5
+SYM B     6
 
-enter PassTwo
 PASS TWO
-ERROR at 1
-ERROR at 2
-leave PassTwo
-enter PrintCodeLines
     0                                           *23 567 9 123 56789 1
     1                                           *ll mmm a sss hhhhh * comment
-    2    1  000000000001 1010 ERRO R000 0000        LD    A   ..... * load the first addend 
-    3    2  000000000010 1000 ERRO R000 0000        ADD   B   ..... * add in the second addend
-    4    3  000000000011 1110 0000 0000 0011        WRT       ..... * write the acc to output
-    5    4  000000000100 1110 0000 0000 0010        STP       ..... 
-    6    5  000000000101 1100 1100 1100 1100        END       ..... 
-leave PrintCodeLines
+    2    0  000000000000 1010 0000 0000 0101        LD    A         * load the first addend 
+    3    1  000000000001 1000 0000 0000 0110        ADD   B   ..... * add in the second addend
+    4    2  000000000010 1110 0000 0000 0011        WRT             * write the acc to output
+    5    3  000000000011 1110 0000 0000 0010        STP             
+    6    4  000000000100 1100 1100 1100 1100        END             
+    7                                           *                    
+    8    5  000000000101 1100 1100 1100 1100 A      HEX       +0005 
+    9    6  000000000110 1100 1100 1100 1100 B      HEX       +0009 
 
-enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
-leave PrintSymbolTable
+SYM A     5
+SYM B     6
 
-leave Assemble
 Main: Ending execution
