@@ -50,12 +50,6 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   while (line != "" && linecounter_ < 4096) {
     codeline = CodeLine();
     string mnemonic, label, addr, symoperand, hexoperand, comments, code;
-    //string label = "";
-    //string addr = "";
-    //string symoperand = "";
-    //string hexoperand = "";
-    //string comments = "";
-    //string code = "";
     if (line.length() < 21) {
       line.append(21-line.length(), ' '); //pad to length 21, for easier code
     }
