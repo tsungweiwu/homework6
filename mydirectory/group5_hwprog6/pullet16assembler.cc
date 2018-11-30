@@ -222,6 +222,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
       }
     }
 
+    (*it).SetPC(pc_in_assembler_);
     if ((*it).GetMnemonic() == "ORG") {
       pc_in_assembler_ = (*it).GetHexObject().GetValue();
     } else if ((*it).GetMnemonic() == "DS ") {
@@ -229,7 +230,6 @@ void Assembler::PassOne(Scanner& in_scanner) {
     } else {
       pc_in_assembler_++;
     }
-    (*it).SetPC(pc_in_assembler_);
  }
 
 #ifdef EBUG
