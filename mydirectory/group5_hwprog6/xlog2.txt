@@ -25,11 +25,11 @@ leave PrintCodeLines
 enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM 12A   4 INVALID
-SYM AU    0
-SYM CHK  68
+SYM 12A   4 INVALID MULTIPLY
+SYM AU    0 MULTIPLY
+SYM CHK  68 MULTIPLY
 SYM LP    5 MULTIPLY
-SYM M1   10
+SYM M1   10 MULTIPLY
 leave PrintSymbolTable
 
 enter PassTwo
@@ -58,11 +58,11 @@ leave PrintCodeLines
 enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM 12A   4 INVALID
-SYM AU    0
-SYM CHK  68
+SYM 12A   4 INVALID MULTIPLY
+SYM AU    0 MULTIPLY
+SYM CHK  68 MULTIPLY
 SYM LP    5 MULTIPLY
-SYM M1   10
+SYM M1   10 MULTIPLY
 leave PrintSymbolTable
 
 leave Assemble

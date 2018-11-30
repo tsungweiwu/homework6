@@ -1,7 +1,6 @@
 Main: Beginning execution
 Main: logfile 'yfiblog.txt
 enter Assemble
-BINARY LENGTH, WORDCOUNT 112 56
 enter PassOne
 PASS ONE
 leave PassOne

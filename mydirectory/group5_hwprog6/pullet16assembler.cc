@@ -91,44 +91,6 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
     linecounter_++;
   }
 
-// Reading Binary File
-  vector<string> input_read_back;
-  std::ifstream input(binary_filename, std::ifstream::binary);
-
-  if (input) {
-    input.seekg(0, input.end);
-    int length = input.tellg();
-    input.seekg(0, input.beg);
-    Utils::log_stream << "BINARY LENGTH, WORDCOUNT " << length
-                      << " " << length/2 << endl;
-
-    // Converted Binary to ascii
-    char buffer[2];
-    for (int i = 0; i < length/2; ++i) {
-      input.read(buffer, 2);
-      int16_t valueread = static_cast<int16_t>((buffer[1]) | (buffer[0] << 8));
-      // int16_t valueread = *(reinterpret_cast<int16_t*>(buffer));
-
-      int32_t bin_32 = valueread;
-      std::stringstream sss;
-      // converts the integer to hex and fills 0s for empty spaces
-      sss << std::hex << std::setfill('0') << std::setw(8) << bin_32;
-
-      string converted_binary = DABnamespace::DecToBitString(valueread, 16);
-      input_read_back.push_back(converted_binary);
-
-      //Utils::log_stream << Utils::Format("READ ITEM", 10)
-      //<< Utils::Format(i, 3) << ": "
-      //<< Utils::Format(valueread, 8) << Utils::Format(sss.str(), 9)
-      //<< Utils::Format(converted_binary, 17)
-      //<< endl;
-
-      // dumps it into output text file
-      out_stream << input_read_back.at(i) << endl;
-    }
-  }
-  input.close();
-
   //////////////////////////////////////////////////////////////////////////
   // Pass one
   // Produce the symbol table and detect errors in symbols.

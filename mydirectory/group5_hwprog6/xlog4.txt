@@ -1,7 +1,6 @@
 Main: Beginning execution
 Main: logfile 'xlog4.txt
 enter Assemble
-BINARY LENGTH, WORDCOUNT 26 13
 enter PassOne
 PASS ONE
 leave PassOne

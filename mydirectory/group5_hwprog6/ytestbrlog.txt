@@ -1,7 +1,6 @@
 Main: Beginning execution
 Main: logfile 'ytestbrlog.txt
 enter Assemble
-BINARY LENGTH, WORDCOUNT 20 10
 enter PassOne
 PASS ONE
 leave PassOne

@@ -1,7 +1,6 @@
 Main: Beginning execution
 Main: logfile 'ytestaddlog.txt
 enter Assemble
-BINARY LENGTH, WORDCOUNT 14 7
 enter PassOne
 PASS ONE
 leave PassOne
