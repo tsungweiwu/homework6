@@ -1,40 +1,35 @@
 Main: Beginning execution
 Main: logfile 'ycountlog.txt
+enter Assemble
+enter PassOne
 PASS ONE
-LINE:nullcode
-    2    1  000000000001 xxxx xxxx xxxx xxxx ...    LD    AAA       * load ACC with value at AAA
-LINE:nullcode
-    3    2  000000000010 xxxx xxxx xxxx xxxx ...    WRT   ...       * write the base value
-LINE:nullcode
-    5    3  000000000011 xxxx xxxx xxxx xxxx TOP    LD    AAA ..... * load the current value
-LINE:nullcode
-    6    4  000000000100 xxxx xxxx xxxx xxxx ...    ADD   ICR ..... * add increment to ACC
-LINE:nullcode
-    7    5  000000000101 xxxx xxxx xxxx xxxx ...    WRT   ... ..... * write the new value
-LINE:nullcode
-    8    6  000000000110 xxxx xxxx xxxx xxxx ...    STC   AAA ..... * store the new value back
-LINE:nullcode
-    9    7  000000000111 xxxx xxxx xxxx xxxx ...    LD    CTR ..... * load ACC with the counter
-LINE:nullcode
-   10    8  000000001000 xxxx xxxx xxxx xxxx ...    ADD   ONE ..... * increment the counter
-LINE:nullcode
-   11    9  000000001001 xxxx xxxx xxxx xxxx ...    STC   CTR ..... * store the new counter value
-LINE:nullcode
-   12   10  000000001010 xxxx xxxx xxxx xxxx ...    LD    CTR ..... * load ACC with the counter
-LINE:nullcode
-   13   11  000000001011 xxxx xxxx xxxx xxxx ...    BAN   TOP ..... * loop until done
-LINE:nullcode
-   15   12  000000001100 xxxx xxxx xxxx xxxx ...    STP   ...       * done if we fall through the loop
-LINE:nullcode
-   17   13  000000001101 xxxx xxxx xxxx xxxx AAA    HEX   ... +0001 * base value
-LINE:nullcode
-   18   14  000000001110 xxxx xxxx xxxx xxxx CTR    HEX   ... -0005 * counter for the loop
-LINE:nullcode
-   19   15  000000001111 xxxx xxxx xxxx xxxx ICR    HEX   ... +0002 * increment
-LINE:nullcode
-   20   16  000000010000 xxxx xxxx xxxx xxxx ONE    HEX   ... +0001 * we need a constant 1
-LINE:nullcode
-   21   17  000000010001 xxxx xxxx xxxx xxxx ...    END   ... .....
+leave PassOne
+enter PrintCodeLines
+    0                                           *23 567 9 123 56789 1
+    1                                           *ll mmm a sss hhhhh * comment
+    2    1  000000000001 1100 1100 1100 1100        LD    AAA ..... * load ACC with value at AAA
+    3    2  000000000010 1100 1100 1100 1100        WRT       ..... * write the base value
+    4                                           *                    
+    5    3  000000000011 1100 1100 1100 1100 TOP    LD    AAA ..... * load the current value
+    6    4  000000000100 1100 1100 1100 1100        ADD   ICR ..... * add increment to ACC
+    7    5  000000000101 1100 1100 1100 1100        WRT       ..... * write the new value
+    8    6  000000000110 1100 1100 1100 1100        STC   AAA ..... * store the new value back
+    9    7  000000000111 1100 1100 1100 1100        LD    CTR ..... * load ACC with the counter
+   10    8  000000001000 1100 1100 1100 1100        ADD   ONE ..... * increment the counter
+   11    9  000000001001 1100 1100 1100 1100        STC   CTR ..... * store the new counter value
+   12   10  000000001010 1100 1100 1100 1100        LD    CTR ..... * load ACC with the counter
+   13   11  000000001011 1100 1100 1100 1100        BAN   TOP ..... * loop until done
+   14                                           *                    
+   15   12  000000001100 1100 1100 1100 1100        STP       ..... * done if we fall through the loop
+   16                                           *                    
+   17   13  000000001101 1100 1100 1100 1100 AAA    HEX       +0001 * base value
+   18   14  000000001110 1100 1100 1100 1100 CTR    HEX       -0005 * counter for the loop
+   19   15  000000001111 1100 1100 1100 1100 ICR    HEX       +0002 * increment
+   20   16  000000010000 1100 1100 1100 1100 ONE    HEX       +0001 * we need a constant 1
+   21   17  000000010001 1100 1100 1100 1100        END       ..... 
+leave PrintCodeLines
+
+enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
 SYM AAA  12
@@ -42,6 +37,45 @@ SYM CTR  13
 SYM ICR  14
 SYM ONE  15
 SYM TOP   2
+leave PrintSymbolTable
 
+enter PassTwo
 PASS TWO
-LINE:
+leave PassTwo
+enter PrintCodeLines
+    0                                           *23 567 9 123 56789 1
+    1                                           *ll mmm a sss hhhhh * comment
+    2    1  000000000001 1010 0000 0000 1100        LD    AAA ..... * load ACC with value at AAA
+    3    2  000000000010 1110 0000 0000 0011        WRT       ..... * write the base value
+    4                                           *                    
+    5    3  000000000011 1010 0000 0000 1100 TOP    LD    AAA ..... * load the current value
+    6    4  000000000100 1000 0000 0000 1110        ADD   ICR ..... * add increment to ACC
+    7    5  000000000101 1110 0000 0000 0011        WRT       ..... * write the new value
+    8    6  000000000110 0100 0000 0000 1100        STC   AAA ..... * store the new value back
+    9    7  000000000111 1010 0000 0000 1101        LD    CTR ..... * load ACC with the counter
+   10    8  000000001000 1000 0000 0000 1111        ADD   ONE ..... * increment the counter
+   11    9  000000001001 0100 0000 0000 1101        STC   CTR ..... * store the new counter value
+   12   10  000000001010 1010 0000 0000 1101        LD    CTR ..... * load ACC with the counter
+   13   11  000000001011 0000 0000 0000 0010        BAN   TOP ..... * loop until done
+   14                                           *                    
+   15   12  000000001100 1110 0000 0000 0010        STP       ..... * done if we fall through the loop
+   16                                           *                    
+   17   13  000000001101 1100 1100 1100 1100 AAA    HEX       +0001 * base value
+   18   14  000000001110 1100 1100 1100 1100 CTR    HEX       -0005 * counter for the loop
+   19   15  000000001111 1100 1100 1100 1100 ICR    HEX       +0002 * increment
+   20   16  000000010000 1100 1100 1100 1100 ONE    HEX       +0001 * we need a constant 1
+   21   17  000000010001 1100 1100 1100 1100        END       ..... 
+leave PrintCodeLines
+
+enter PrintSymbolTable
+SYMBOL TABLE
+    SYM LOC FLAGS
+SYM AAA  12
+SYM CTR  13
+SYM ICR  14
+SYM ONE  15
+SYM TOP   2
+leave PrintSymbolTable
+
+leave Assemble
+Main: Ending execution

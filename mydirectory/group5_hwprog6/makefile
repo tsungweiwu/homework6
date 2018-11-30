@@ -24,8 +24,8 @@ dabnamespace.o: dabnamespace.h dabnamespace.cc
 	$(GPP) -c dabnamespace.cc
 
 pullet16assembler.o: pullet16assembler.h pullet16assembler.cc
-#	$(GPP) -c -DEBUG pullet16assembler.cc
-	$(GPP) -c pullet16assembler.cc
+	$(GPP) -c -DEBUG pullet16assembler.cc
+#	$(GPP) -c pullet16assembler.cc
 
 codeline.o: codeline.h codeline.cc
 	$(GPP) -c codeline.cc

@@ -51,19 +51,21 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
     if (line == "") { break; }
     codeline = CodeLine();
 
-    string mnemonic = "nullmnemonic";
-    string label = "nulllabel";
+    string mnemonic = "";
+    string label = "";
     string addr = "";
-    string symoperand = "nullsymoperand";
+    string symoperand = "";
     string hexoperand = "";
-    string comments = "nullcomments";
-    string code = "nullcode";
+    string comments = "";
+    string code = "";
     if (line.length() < 21) {
       line.append(21-line.length(), ' '); //pad to length 21, for easier code
     }
 
     if (line.substr(0,1)=="*") {
       codeline.SetCommentsOnly(linecounter_,line);
+      code = "nullcode";
+      codeline.SetMachineCode(code);
     } else {
       if (line.substr(0,3) != "   ") {
         label = line.substr(0,3);
@@ -79,7 +81,7 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
       if (line.substr(20,1) == "*") {
         comments = line.substr(20);
       }
-      codeline.SetCodeLine(linecounter_, 0, label, mnemonic, addr, symoperand, hexoperand, comments, code);
+      codeline.SetCodeLine(linecounter_, pc_in_assembler_, label, mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
     }
     codelines_.push_back(codeline);
     if (codeline.GetMnemonic() == "END") {
@@ -131,13 +133,14 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   // Pass one
   // Produce the symbol table and detect errors in symbols.
   PassOne(in_scanner);
-  //PrintCodeLines();
+  PrintCodeLines();
   PrintSymbolTable();
   //////////////////////////////////////////////////////////////////////////
   // Pass two
   // Generate the machine code.
   PassTwo();
   PrintCodeLines();
+  PrintSymbolTable();
   //////////////////////////////////////////////////////////////////////////
   // Dump the results.
 
@@ -227,7 +230,6 @@ void Assembler::PassOne(Scanner& in_scanner) {
       pc_in_assembler_++;
     }
     (*it).SetPC(pc_in_assembler_);
-    Utils::log_stream << (*it).ToString() << '\n';
  }
 
 #ifdef EBUG

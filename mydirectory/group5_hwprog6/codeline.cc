@@ -13,12 +13,6 @@
 **/
 CodeLine::CodeLine() {
 }
-
-int pc = 0;
-int linecounter = 0;
-
-CodeLine::CodeLine(string codeline) {
-}
 //CodeLine::CodeLine(Globals globals) {
 //  globals_ = globals;
 //}
@@ -207,7 +201,6 @@ string CodeLine::ToString() const {
   Utils::log_stream << "enter ToString" << endl;
 #endif
   string s = "";
-  Utils::log_stream << "LINE:" << code_ << endl;
 
   s += Utils::Format(linecounter_, 5) + " ";
 
