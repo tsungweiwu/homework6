@@ -46,18 +46,16 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
 // Reading Ascii input
   int linecounter_ = 0;
   CodeLine codeline;
-  while (linecounter_ < 4096) {
-    string line = in_scanner.NextLine();
-    if (line == "") { break; }
+  string line = in_scanner.NextLine();
+  while (line != "" && linecounter_ < 4096) {
     codeline = CodeLine();
-
-    string mnemonic = "";
-    string label = "";
-    string addr = "";
-    string symoperand = "";
-    string hexoperand = "";
-    string comments = "";
-    string code = "";
+    string mnemonic, label, addr, symoperand, hexoperand, comments, code;
+    //string label = "";
+    //string addr = "";
+    //string symoperand = "";
+    //string hexoperand = "";
+    //string comments = "";
+    //string code = "";
     if (line.length() < 21) {
       line.append(21-line.length(), ' '); //pad to length 21, for easier code
     }
@@ -86,9 +84,9 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
     codelines_.push_back(codeline);
     if (codeline.GetMnemonic() == "END") {
       found_end_statement_ = true;
-      break;
     }
-    linecounter_++;
+    linecounter_++; 
+    line = in_scanner.NextLine();
   }
 
   //////////////////////////////////////////////////////////////////////////
