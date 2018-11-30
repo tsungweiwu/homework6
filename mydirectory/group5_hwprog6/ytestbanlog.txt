@@ -26,10 +26,10 @@ leave PrintCodeLines
 enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM A    11
-SYM LUP   9
-SYM ONE  10
-SYM TOP   1
+SYM A    11 MULTIPLY
+SYM LUP   9 MULTIPLY
+SYM ONE  10 MULTIPLY
+SYM TOP   1 MULTIPLY
 leave PrintSymbolTable
 
 enter PassTwo
@@ -57,10 +57,10 @@ leave PrintCodeLines
 enter PrintSymbolTable
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM A    11
-SYM LUP   9
-SYM ONE  10
-SYM TOP   1
+SYM A    11 MULTIPLY
+SYM LUP   9 MULTIPLY
+SYM ONE  10 MULTIPLY
+SYM TOP   1 MULTIPLY
 leave PrintSymbolTable
 
 leave Assemble

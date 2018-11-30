@@ -1,7 +1,6 @@
 Main: Beginning execution
 Main: logfile 'ylooplog.txt
 enter Assemble
-BINARY LENGTH, WORDCOUNT 10 5
 enter PassOne
 PASS ONE
 leave PassOne

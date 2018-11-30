@@ -1,7 +1,6 @@
 Main: Beginning execution
 Main: logfile 'ysquareslog.txt
 enter Assemble
-BINARY LENGTH, WORDCOUNT 44 22
 enter PassOne
 PASS ONE
 leave PassOne
