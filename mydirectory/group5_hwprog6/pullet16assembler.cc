@@ -43,47 +43,6 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   Utils::log_stream << "enter Assemble" << endl;
 #endif
 
-// Reading Ascii input
-  int linecounter_ = 0;
-  CodeLine codeline;
-  string line = in_scanner.NextLine();
-  while (line != "" && linecounter_ < 4096) {
-    codeline = CodeLine();
-    string mnemonic, label, addr, symoperand, hexoperand, comments, code;
-    if (line.length() < 21) {
-      line.append(21-line.length(), ' ');  // pad to length 21, for easier code
-    }
-
-    if (line.substr(0, 1) == "*") {
-      codeline.SetCommentsOnly(linecounter_, line);
-      code = "nullcode";
-      codeline.SetMachineCode(code);
-    } else {
-      if (line.substr(0, 3) != "   ") {
-        label = line.substr(0, 3);
-      }  // if field is empty, value of label_ will be null
-      mnemonic = line.substr(4, 3);
-      addr = line.substr(8, 1);
-      if (line.substr(10, 3) != "   ") {
-        symoperand = line.substr(10, 3);
-      }  // if field is empty, value of symoperand_ will be null
-      if (line.substr(14, 5) != "     ") {
-        hexoperand = line.substr(14, 5);
-      }
-      if (line.substr(20, 1) == "*") {
-        comments = line.substr(20);
-      }
-      codeline.SetCodeLine(linecounter_, pc_in_assembler_, label,
-      mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
-    }
-    codelines_.push_back(codeline);
-    if (codeline.GetMnemonic() == "END") {
-      found_end_statement_ = true;
-    }
-    linecounter_++;
-    line = in_scanner.NextLine();
-  }
-
   //////////////////////////////////////////////////////////////////////////
   // Pass one
   // Produce the symbol table and detect errors in symbols.
@@ -162,30 +121,62 @@ void Assembler::PassOne(Scanner& in_scanner) {
 #endif
   Utils::log_stream << "PASS ONE" << endl;
   // Unfinished code -Sean
+
   string lbl = "";
   pc_in_assembler_ = 0;
-  for (auto it = codelines_.begin(); it != codelines_.end(); it++) {
-    if ((*it).IsAllComment()) {
-      continue;
-    }
-    if ((*it).HasLabel()) {
-      lbl = (*it).GetLabel();
-      if (symboltable_.count(lbl) == 0) {
-        symboltable_.insert({lbl, Symbol(lbl, pc_in_assembler_)});
-      } else {
-        symboltable_.at(lbl).SetMultiply();
-      }
+  int linecounter_ = 0;
+  CodeLine codeline;
+  string line = in_scanner.NextLine();
+  while (line != "" && linecounter_ < 4096) {
+    codeline = CodeLine();
+    string mnemonic, label, addr, symoperand, hexoperand, comments, code;
+    if (line.length() < 21) {
+      line.append(21-line.length(), ' ');  // pad to length 21, for easier code
     }
 
-    (*it).SetPC(pc_in_assembler_);
-    if ((*it).GetMnemonic() == "ORG") {
-      pc_in_assembler_ = (*it).GetHexObject().GetValue();
-    } else if ((*it).GetMnemonic() == "DS ") {
-      pc_in_assembler_ += (*it).GetHexObject().GetValue();
+    if (line.substr(0, 1) == "*") {
+      codeline.SetCommentsOnly(linecounter_, line);
+      code = "nullcode";
+      codeline.SetMachineCode(code);
     } else {
-      pc_in_assembler_++;
+      if (line.substr(0, 3) != "   ") {
+        label = line.substr(0, 3);
+        if (symboltable_.count(label) == 0) {
+          symboltable_.insert({label, Symbol(label, pc_in_assembler_)});
+        } else {
+          symboltable_.at(label).SetMultiply();
+        }
+      }  // if field is empty, value of label_ will be null
+      mnemonic = line.substr(4, 3);
+      addr = line.substr(8, 1);
+      if (line.substr(10, 3) != "   ") {
+        symoperand = line.substr(10, 3);
+      }  // if field is empty, value of symoperand_ will be null
+      if (line.substr(14, 5) != "     ") {
+        hexoperand = line.substr(14, 5);
+      }
+      if (line.substr(20, 1) == "*") {
+        comments = line.substr(20);
+      }
+      codeline.SetCodeLine(linecounter_, pc_in_assembler_, label,
+      mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
+
+      if (mnemonic == "ORG") {
+        pc_in_assembler_ = codeline.GetHexObject().GetValue();
+      } else if (mnemonic == "DS ") {
+        pc_in_assembler_ += codeline.GetHexObject().GetValue();
+      } else {
+        pc_in_assembler_++;
+      }
+
+      if (mnemonic == "END") {
+        found_end_statement_ = true;
+      }
     }
-}
+    linecounter_++;
+    codelines_.push_back(codeline);
+    line = in_scanner.NextLine();
+  }
 
 #ifdef EBUG
   Utils::log_stream << "leave PassOne" << endl;
