@@ -1,5 +1,5 @@
 Main: Beginning execution
-Main: logfile 'yfiblog.txt
+Main: logfile '1log.txt
 PASS ONE
     0                                           *23 567 9 123 56789 1
     1                                           *ll mmm a sss hhhhh * comment

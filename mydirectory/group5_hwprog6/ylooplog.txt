@@ -13,8 +13,8 @@ PASS ONE
 
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM IDX   4
-SYM TOP   0
+SYM IDX   4 MULTIPLY
+SYM TOP   0 MULTIPLY
 
 PASS TWO
     0                                           *23 567 9 123 56789 1
@@ -24,12 +24,20 @@ PASS TWO
     4    2  000000000010 0000 0000 0000 0000        BAN   TOP       * store the new value
     5    3  000000000011 1110 0000 0000 0010        STP             
     6                                           *                    
-    7    4  000000000100 1100 1100 1100 1100 IDX    HEX       -0002 * loop index
-    8    5  000000000101 1100 1100 1100 1100        END             
+    7    4  000000000100 1111 1111 1111 1110 IDX    HEX       -0002 * loop index
+    8    5  000000000101 1111 1111 1111 1110        END             
 
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM IDX   4
-SYM TOP   0
+SYM IDX   4 MULTIPLY
+SYM TOP   0 MULTIPLY
 
+MACHINE CODE
+enter PrintMachineCode ASCII printing NOT BIN (YET)
+  0 1010000000000100
+  1 1110000000000011
+  2 0000000000000000
+  3 1110000000000010
+  4 1111111111111110
+  5 1111111111111110
 Main: Ending execution

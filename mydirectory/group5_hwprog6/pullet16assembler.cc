@@ -55,6 +55,7 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   PassTwo();
   PrintCodeLines();
   PrintSymbolTable();
+  PrintMachineCode(binary_filename, out_stream);
   //////////////////////////////////////////////////////////////////////////
   // Dump the results.
 
@@ -193,7 +194,7 @@ void Assembler::PassTwo() {
 #endif
   Utils::log_stream << "PASS TWO" << endl;
   string bitstring = "";
-// Note: this code does not handle HEX, ORG, DS, END correctly yet
+// Note: this code does not handle ORG, DS, END correctly yet
 // This block goes through each of the inputted codelines and converts the
 // mnemonic, direct/indirect addressing, and 12 bit address to appropriate
 // machine code.
@@ -204,8 +205,6 @@ void Assembler::PassTwo() {
       map <string, string>::iterator op_it = opcodes.find((*it).GetMnemonic());
       if (op_it != opcodes.end()) {
         bitstring = opcodes.find((*it).GetMnemonic())-> second;
-        // to do error flagging for if an opcode
-        // that isn't in the set of defined codes is found (ex: div)
         // The second block looks for the
         // asterisk to determine whether the 4th bit
         // should be denoted as direct or indirect addressing.
@@ -214,33 +213,41 @@ void Assembler::PassTwo() {
         } else {
           bitstring += "0";
         }
-        if (bitstring.substr(0, 3) == "111") {
-          if ((*it).GetMnemonic() == "RD ") {
-            bitstring += "000000000001";
-          } else if ((*it).GetMnemonic() == "STP") {
-            bitstring += "000000000010";
-          } else if ((*it).GetMnemonic() == "WRT") {
-            bitstring += "000000000011";
-          }
-        } else {
-        // The third block finds the symbol
-        // operand in the symbol table if needed
-          map <string, Symbol>::iterator sym_it = symboltable_.find(
+        map <string, Symbol>::iterator sym_it = symboltable_.find(
                                                   (*it).GetSymOperand());
-          Symbol symbol;
-          if (sym_it != symboltable_.end()) {
-            symbol = symboltable_.find((*it).GetSymOperand())-> second;
-            bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
-          } else {
-          // This block handles read, write, and stop,
-          // where no value from the symbol
-          // table is needed to set the last 12 bits.
-          // to do The symbol is not found in the symbol table
-            bitstring += "ERROR0000000";
+        Symbol symbol;
+        // Either a value needs to be taken from the symbol table for the last
+        // 12 bits, or it is based on whether it is RD, WRT, or STP
+        if (sym_it != symboltable_.end()) {
+          symbol = symboltable_.find((*it).GetSymOperand())-> second;
+          bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
+        }
+        else {
+          if (bitstring.substr(0, 3) == "111") {
+            if ((*it).GetMnemonic() == "RD ") {
+              bitstring += "000000000001";
+            } else if ((*it).GetMnemonic() == "STP") {
+              bitstring += "000000000010";
+            } else if ((*it).GetMnemonic() == "WRT") {
+              bitstring += "000000000011";
+            }
+          }
+          else {
+            // This block handles the case
+            // where no value from the symbol
+            // table is needed to set the last 12 bits.
+            // to do The symbol is not found in the symbol table
+            // bitstring += "ERROR0000000";
             Utils::log_stream << "ERROR at " << (*it).GetPC() << endl;
           }
         }
-        if (bitstring.length() < 16) {
+      }
+      else if ((*it).GetMnemonic() == "HEX") {
+          bitstring = DABnamespace::DecToBitString(
+                           (*it).GetHexObject().GetValue(), 16);
+      }
+    }
+    if (bitstring.length() < 16) {
       // Basically a TEMPORARY hacky way of
       // handling all the errors I haven't handled yet
       // (like stuff like HEX, ORG, END, DS that
@@ -249,11 +256,9 @@ void Assembler::PassTwo() {
       // defined/invalid symbols and opcodes)
       // Eventually when all of these cases are handled
       // this block won't be needed and we can remove it
-          (*it).SetMachineCode("0000000000000000");
-        } else {
-          (*it).SetMachineCode(bitstring);
-        }
-      }
+      (*it).SetMachineCode("0000000000000000");
+    } else {
+      (*it).SetMachineCode(bitstring);
     }
   }
   #ifdef EBUG
@@ -296,7 +301,22 @@ void Assembler::PrintMachineCode(string binary_filename,
   Utils::log_stream << "enter PrintMachineCode" << " "
                     << binary_filename << endl;
 #endif
-  string s = "";
+string s = "";
+// WILL CHANGE THIS TO BE READING THE BINARY MACHINE CODE LATER BUT FOR NOW
+// JUST DUMPING THE ASCII THAT WE HAVE
+// TODO find a way to do that kDummyCodeA thing in the middle !!!
+Utils::log_stream << "MACHINE CODE\n"
+                  << "enter PrintMachineCode ASCII printing NOT BIN (YET)"
+                  << endl;
+int count = 0;
+for (auto iter = codelines_.begin(); iter != codelines_.end(); ++iter) {
+  if(((*iter).GetCode() != "nullcode") && ((*iter).GetCode() != kDummyCodeA)
+      && !(*iter).IsAllComment()) {
+    Utils::log_stream << Utils::Format(count,3) << " "
+                      << (*iter).GetCode() << '\n';
+    count++;
+  }
+}
 
 #ifdef EBUG
   Utils::log_stream << "leave PrintMachineCode" << endl;
@@ -311,11 +331,12 @@ void Assembler::PrintSymbolTable() {
 #ifdef EBUG
   Utils::log_stream << "enter PrintSymbolTable" << endl;
 #endif
-  string s = "";
-  Utils::log_stream << "SYMBOL TABLE\n    SYM LOC FLAGS\n";
-  for (std::pair<string, Symbol> it : symboltable_) {
-    Utils::log_stream << "SYM " << it.second.ToString() << endl;
-  }
+
+string s = "";
+Utils::log_stream << "SYMBOL TABLE\n    SYM LOC FLAGS\n";
+for (std::pair<string, Symbol> it : symboltable_) {
+  Utils::log_stream << "SYM " << it.second.ToString() << endl;
+}
 
 #ifdef EBUG
   Utils::log_stream << "leave PrintSymbolTable" << endl;
