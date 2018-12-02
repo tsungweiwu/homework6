@@ -58,6 +58,27 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   PrintMachineCode(binary_filename, out_stream);
   //////////////////////////////////////////////////////////////////////////
   // Dump the results.
+  // Reading Binary File
+  std::ifstream input(binary_filename, std::ifstream::binary);
+  
+  if (input) {
+    input.seekg(0, input.end);
+    int length = input.tellg();
+    input.seekg(0, input.beg);
+
+    // Converted Binary to ascii
+    char buffer[2];
+    for (int i = 0; i < length/2; ++i) {
+      input.read(buffer, 2);
+      int16_t valueread = static_cast<int16_t>((buffer[1]) | (buffer[0] << 8));
+
+      string converted_binary = DABnamespace::DecToBitString(valueread, 16);
+
+      // dumps it into output text file
+      out_stream << converted_binary << endl;
+    }
+  }
+  input.close();
 
 #ifdef EBUG
   Utils::log_stream << "leave Assemble" << endl;
@@ -127,38 +148,45 @@ void Assembler::PassOne(Scanner& in_scanner) {
   pc_in_assembler_ = 0;
   int linecounter_ = 0;
   CodeLine codeline;
+  // obtaining the next line read
   string line = in_scanner.NextLine();
   while (line != "" && linecounter_ < 4096) {
-    codeline = CodeLine();
+    codeline = CodeLine();  // creating object
     string mnemonic, label, addr, symoperand, hexoperand, comments, code;
     if (line.length() < 21) {
       line.append(21-line.length(), ' ');  // pad to length 21, for easier code
     }
 
     if (line.substr(0, 1) == "*") {
+      // set beginning lines of comments
       codeline.SetCommentsOnly(linecounter_, line);
+      // set machine code to null for the comments
       code = "nullcode";
       codeline.SetMachineCode(code);
     } else {
-      if (line.substr(0, 3) != "   ") {
+      if (line.substr(0, 3) != "   ") {  // reading label
         label = line.substr(0, 3);
         if (symboltable_.count(label) == 0) {
+          // creating table if not existing yet
           symboltable_.insert({label, Symbol(label, pc_in_assembler_)});
         } else {
+          // sets a flag for duplicate labels
           symboltable_.at(label).SetMultiply();
         }
-      }  // if field is empty, value of label_ will be null
-      mnemonic = line.substr(4, 3);
-      addr = line.substr(8, 1);
+      }  // end of if label
+      mnemonic = line.substr(4, 3);  // getting mnemonic
+      addr = line.substr(8, 1);  // getting addr
       if (line.substr(10, 3) != "   ") {
+        // if field is empty, value of symoperand_ will be null
         symoperand = line.substr(10, 3);
-      }  // if field is empty, value of symoperand_ will be null
+      }  // end of if symbol
       if (line.substr(14, 5) != "     ") {
         hexoperand = line.substr(14, 5);
-      }
+      }  // end of if hex operand
       if (line.substr(20, 1) == "*") {
         comments = line.substr(20);
-      }
+      }  // end of if comments
+      // sends all the data for it to be assigned
       codeline.SetCodeLine(linecounter_, pc_in_assembler_, label,
       mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
 
@@ -166,18 +194,18 @@ void Assembler::PassOne(Scanner& in_scanner) {
         pc_in_assembler_ = codeline.GetHexObject().GetValue();
       } else if (mnemonic == "DS ") {
         pc_in_assembler_ += codeline.GetHexObject().GetValue();
-      } else {
+      } else if (mnemonic != "END") {
         pc_in_assembler_++;
-      }
+      }  // end of if END
 
       if (mnemonic == "END") {
         found_end_statement_ = true;
-      }
-    }
+      } // end of if statement END
+    }  // end of else statement
     linecounter_++;
     codelines_.push_back(codeline);
     line = in_scanner.NextLine();
-  }
+  }  // end of while loop
 
 #ifdef EBUG
   Utils::log_stream << "leave PassOne" << endl;
@@ -233,11 +261,12 @@ void Assembler::PassTwo() {
             }
           }
           else {
-            // This block handles the case
-            // where no value from the symbol
-            // table is needed to set the last 12 bits.
-            // to do The symbol is not found in the symbol table
-            // bitstring += "ERROR0000000";
+            /* This block handles the case
+            where no value from the symbol
+            table is needed to set the last 12 bits.
+            to do The symbol is not found in the symbol table 
+            */
+            bitstring += "ERROR0000000";
             Utils::log_stream << "ERROR at " << (*it).GetPC() << endl;
           }
         }
@@ -248,14 +277,15 @@ void Assembler::PassTwo() {
       }
     }
     if (bitstring.length() < 16) {
-      // Basically a TEMPORARY hacky way of
-      // handling all the errors I haven't handled yet
-      // (like stuff like HEX, ORG, END, DS that
-      // I just haven't gotten around to generating machine code for
-      // and error cases like undefined/multiply
-      // defined/invalid symbols and opcodes)
-      // Eventually when all of these cases are handled
-      // this block won't be needed and we can remove it
+      /* Basically a TEMPORARY hacky way of
+      * handling all the errors I haven't handled yet
+      * (like stuff like HEX, ORG, END, DS that
+      * I just haven't gotten around to generating machine code for
+      * and error cases like undefined/multiply
+      * defined/invalid symbols and opcodes)
+      * Eventually when all of these cases are handled
+      * this block won't be needed and we can remove it
+      */
       (*it).SetMachineCode("0000000000000000");
     } else {
       (*it).SetMachineCode(bitstring);
@@ -304,20 +334,38 @@ void Assembler::PrintMachineCode(string binary_filename,
 string s = "";
 // WILL CHANGE THIS TO BE READING THE BINARY MACHINE CODE LATER BUT FOR NOW
 // JUST DUMPING THE ASCII THAT WE HAVE
-// TODO find a way to do that kDummyCodeA thing in the middle !!!
+// to do find a way to do that kDummyCodeA thing in the middle !!!
 Utils::log_stream << "MACHINE CODE\n"
-                  << "enter PrintMachineCode ASCII printing NOT BIN (YET)"
+                  << "enter PrintMachineCode " << binary_filename
                   << endl;
+
+std::ofstream output(binary_filename, std::ofstream::binary);
 int count = 0;
 for (auto iter = codelines_.begin(); iter != codelines_.end(); ++iter) {
   if(((*iter).GetCode() != "nullcode") && ((*iter).GetCode() != kDummyCodeA)
-      && !(*iter).IsAllComment()) {
-    Utils::log_stream << Utils::Format(count,3) << " "
-                      << (*iter).GetCode() << '\n';
+      && !(*iter).IsAllComment() && (*iter).GetMnemonic() != "END") {
+    s += Utils::Format(count, 4) + " ";
+    s += DABnamespace::DecToBitString(count, 12) + " ";
+    s += (*iter).GetCode().substr(0, 4) + " ";
+    s += (*iter).GetCode().substr(4, 4) + " ";
+    s += (*iter).GetCode().substr(8, 4) + " ";
+    s += (*iter).GetCode().substr(12, 4) + '\n';
     count++;
-  }
-}
 
+    if (output) {
+      int16_t ascii_16 = DABnamespace::BitStringToDec(
+        (*iter).GetCode());
+      char data[4];
+        data[0] = static_cast<char>(ascii_16 >> 8);
+        data[1] = static_cast<char>((ascii_16));
+        // writes the binary to file
+        output.write(data, 2);
+    } // end of if (output)
+
+  } // end of if
+} // end of for loop
+output.close();
+Utils::log_stream << s << endl;
 #ifdef EBUG
   Utils::log_stream << "leave PrintMachineCode" << endl;
 #endif
