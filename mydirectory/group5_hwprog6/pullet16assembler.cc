@@ -150,50 +150,59 @@ void Assembler::PassOne(Scanner& in_scanner) {
   CodeLine codeline;
   // obtaining the next line read
   string line = in_scanner.NextLine();
-  while (line != "" && linecounter_ < 4096) {
+  while (line != "") {
     codeline = CodeLine();  // creating object
     string mnemonic, label, addr, symoperand, hexoperand, comments, code;
+    mnemonic = "nullmnemonic";
+    label = "nulllabel";
+    symoperand = "nullsymoperand";
+    comments = "nullcomments";
+    code = "nullcode";
     if (line.length() < 21) {
       line.append(21-line.length(), ' ');  // pad to length 21, for easier code
     }
-
     if (line.substr(0, 1) == "*") {
       // set beginning lines of comments
       codeline.SetCommentsOnly(linecounter_, line);
       // set machine code to null for the comments
-      code = "nullcode";
       codeline.SetMachineCode(code);
     } else {
       if (line.substr(0, 3) != "   ") {  // reading label
         label = line.substr(0, 3);
         if (symboltable_.count(label) == 0) {
-          // creating table if not existing yet
+          // add symbol to table if not already present
           symboltable_.insert({label, Symbol(label, pc_in_assembler_)});
         } else {
           // sets a flag for duplicate labels
           symboltable_.at(label).SetMultiply();
         }
-      }  // end of if label
+      } // end of if label
       mnemonic = line.substr(4, 3);  // getting mnemonic
       addr = line.substr(8, 1);  // getting addr
       if (line.substr(10, 3) != "   ") {
         // if field is empty, value of symoperand_ will be null
         symoperand = line.substr(10, 3);
       }  // end of if symbol
-      if (line.substr(14, 5) != "     ") {
-        hexoperand = line.substr(14, 5);
-      }  // end of if hex operand
+      hexoperand = line.substr(14, 5);
       if (line.substr(20, 1) == "*") {
         comments = line.substr(20);
       }  // end of if comments
       // sends all the data for it to be assigned
       codeline.SetCodeLine(linecounter_, pc_in_assembler_, label,
       mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
-
+      int jumpvalue = codeline.GetHexObject().GetValue();
       if (mnemonic == "ORG") {
-        pc_in_assembler_ = codeline.GetHexObject().GetValue();
+        if (jumpvalue > 4095 || jumpvalue < 0) {
+          Utils::log_stream << "Invalid ORG at line: " << linecounter_ << endl;
+        } else {
+        pc_in_assembler_ = jumpvalue;
+        }
       } else if (mnemonic == "DS ") {
-        pc_in_assembler_ += codeline.GetHexObject().GetValue();
+        if ( (jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1) {
+          Utils::log_stream << "Invalid DS at line: " << linecounter_ << endl;
+        } else {
+        pc_in_assembler_ += jumpvalue;
+        }
       } else if (mnemonic != "END") {
         pc_in_assembler_++;
       }  // end of if END
@@ -222,6 +231,7 @@ void Assembler::PassTwo() {
 #endif
   Utils::log_stream << "PASS TWO" << endl;
   string bitstring = "";
+  Symbol symbol;
 // Note: this code does not handle ORG, DS, END correctly yet
 // This block goes through each of the inputted codelines and converts the
 // mnemonic, direct/indirect addressing, and 12 bit address to appropriate
@@ -229,66 +239,51 @@ void Assembler::PassTwo() {
   for (auto it = codelines_.begin(); it != codelines_.end(); it++) {
     // The first block looks for the mnemonic in the map
     // of opcodes, and converts to machine code accordingly.
-    if (!(*it).IsAllComment()) {
-      map <string, string>::iterator op_it = opcodes.find((*it).GetMnemonic());
-      if (op_it != opcodes.end()) {
-        bitstring = opcodes.find((*it).GetMnemonic())-> second;
-        // The second block looks for the
-        // asterisk to determine whether the 4th bit
-        // should be denoted as direct or indirect addressing.
-        if ((*it).GetAddr() == "*") {
-          bitstring += "1";
-        } else {
-          bitstring += "0";
-        }
-        map <string, Symbol>::iterator sym_it = symboltable_.find(
-                                                  (*it).GetSymOperand());
-        Symbol symbol;
-        // Either a value needs to be taken from the symbol table for the last
-        // 12 bits, or it is based on whether it is RD, WRT, or STP
-        if (sym_it != symboltable_.end()) {
-          symbol = symboltable_.find((*it).GetSymOperand())-> second;
-          bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
-        }
-        else {
-          if (bitstring.substr(0, 3) == "111") {
-            if ((*it).GetMnemonic() == "RD ") {
-              bitstring += "000000000001";
-            } else if ((*it).GetMnemonic() == "STP") {
-              bitstring += "000000000010";
-            } else if ((*it).GetMnemonic() == "WRT") {
-              bitstring += "000000000011";
-            }
-          }
-          else {
-            /* This block handles the case
-            where no value from the symbol
-            table is needed to set the last 12 bits.
-            to do The symbol is not found in the symbol table 
-            */
-            bitstring += "ERROR0000000";
-            Utils::log_stream << "ERROR at " << (*it).GetPC() << endl;
-          }
-        }
-      }
-      else if ((*it).GetMnemonic() == "HEX") {
-          bitstring = DABnamespace::DecToBitString(
-                           (*it).GetHexObject().GetValue(), 16);
-      }
+    if ((*it).IsAllComment()) {
+      continue;
     }
-    if (bitstring.length() < 16) {
-      /* Basically a TEMPORARY hacky way of
-      * handling all the errors I haven't handled yet
-      * (like stuff like HEX, ORG, END, DS that
-      * I just haven't gotten around to generating machine code for
-      * and error cases like undefined/multiply
-      * defined/invalid symbols and opcodes)
-      * Eventually when all of these cases are handled
-      * this block won't be needed and we can remove it
-      */
-      (*it).SetMachineCode("0000000000000000");
-    } else {
-      (*it).SetMachineCode(bitstring);
+    map <string, string>::iterator op_it = opcodes.find((*it).GetMnemonic());
+    if (op_it != opcodes.end()) {
+      bitstring = opcodes.find((*it).GetMnemonic())-> second;
+      // The second block looks for the
+      // asterisk to determine whether the 4th bit
+      // should be denoted as direct or indirect addressing.
+      if ((*it).GetAddr() == "*") {
+        bitstring += "1";
+      } else {
+        bitstring += "0";
+      }
+      map <string, Symbol>::iterator sym_it = symboltable_.find(
+                                                (*it).GetSymOperand());
+      // The last twelve digits are defined by the symbol or the hex operand,
+      // unless it's RD or STP or WRT
+      if (sym_it != symboltable_.end()) {
+        symbol = symboltable_.find((*it).GetSymOperand())-> second;
+        bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
+      } else if (!(*it).GetHexObject().IsNull()) {
+        bitstring += DABnamespace::DecToBitString(
+            (*it).GetHexObject().GetValue(), 12);
+      } else {
+        //to do: The symbol is not found in the symbol table 
+        Utils::log_stream << "Symbol not in table at " << (*it).GetPC() << endl;
+        continue;
+      }
+      WriteMemory((*it).GetPC(), bitstring);
+    } else if ((*it).GetMnemonic() == "RD ") {
+      WriteMemory((*it).GetPC(), "111000000000001");
+    } else if ((*it).GetMnemonic() == "STP") {
+      WriteMemory((*it).GetPC(), "111000000000010");
+    } else if ((*it).GetMnemonic() == "WRT") {
+      WriteMemory((*it).GetPC(), "111000000000011");
+    } else if ((*it).GetMnemonic() == "HEX") {
+      WriteMemory((*it).GetPC(), DABnamespace::DecToBitString(
+          (*it).GetHexObject().GetValue(), 16));
+    } else if ((*it).GetMnemonic() == "DS ") {
+      WriteMemory((*it).GetPC() + 
+          (*it).GetHexObject().GetValue() - 1, kDummyCodeA);
+      WriteMemory((*it).GetPC(), kDummyCodeC);
+    } else if ((*it).GetMnemonic() == "ORG") {
+      //nothing needs to be done
     }
   }
   #ifdef EBUG
@@ -341,28 +336,22 @@ Utils::log_stream << "MACHINE CODE\n"
 
 std::ofstream output(binary_filename, std::ofstream::binary);
 int count = 0;
-for (auto iter = codelines_.begin(); iter != codelines_.end(); ++iter) {
-  if(((*iter).GetCode() != "nullcode") && ((*iter).GetCode() != kDummyCodeA)
-      && !(*iter).IsAllComment() && (*iter).GetMnemonic() != "END") {
-    s += Utils::Format(count, 4) + " ";
-    s += DABnamespace::DecToBitString(count, 12) + " ";
-    s += (*iter).GetCode().substr(0, 4) + " ";
-    s += (*iter).GetCode().substr(4, 4) + " ";
-    s += (*iter).GetCode().substr(8, 4) + " ";
-    s += (*iter).GetCode().substr(12, 4) + '\n';
-    count++;
-
-    if (output) {
-      int16_t ascii_16 = DABnamespace::BitStringToDec(
-        (*iter).GetCode());
-      char data[4];
-        data[0] = static_cast<char>(ascii_16 >> 8);
-        data[1] = static_cast<char>((ascii_16));
-        // writes the binary to file
-        output.write(data, 2);
-    } // end of if (output)
-
-  } // end of if
+for (auto iter = memory_.begin(); iter != memory_.end(); ++iter) {
+  s += Utils::Format(count, 4) + " ";
+  s += DABnamespace::DecToBitString(count, 12) + " ";
+  s += (*iter).GetBitPattern().substr(0, 4) + " ";
+  s += (*iter).GetBitPattern().substr(4, 4) + " ";
+  s += (*iter).GetBitPattern().substr(8, 4) + " ";
+  s += (*iter).GetBitPattern().substr(12, 4) + '\n';
+  count++;
+  if (output) {
+    int16_t ascii_16 = DABnamespace::BitStringToDec((*iter).GetBitPattern());
+    char data[4];
+      data[0] = static_cast<char>(ascii_16 >> 8);
+      data[1] = static_cast<char>((ascii_16));
+      // writes the binary to file
+      output.write(data, 2);
+  } // end of if (output) 
 } // end of for loop
 output.close();
 Utils::log_stream << s << endl;
@@ -426,4 +415,15 @@ void Assembler::UpdateSymbolTable(int pc, string symboltext) {
 #ifdef EBUG
   Utils::log_stream << "leave UpdateSymbolTable" << endl;
 #endif
+}
+
+void Assembler::WriteMemory(int pc, string code) {
+  for (int i = memory_.size(); i < pc; i++) {
+    memory_.push_back(OneMemoryWord(kDummyCodeA));
+  }
+  if ((int)memory_.size() == pc) {
+    memory_.push_back(OneMemoryWord(code));
+  } else {
+    memory_.at(pc) = OneMemoryWord(code);
+  }
 }

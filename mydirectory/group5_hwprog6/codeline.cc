@@ -76,8 +76,8 @@ string CodeLine::GetMnemonic() const {
   return mnemonic_;
 }
 
-string CodeLine::GetPC() const {
-  return std::to_string(pc_);
+int CodeLine::GetPC() const {
+  return pc_;
 }
 
 /***************************************************************************
