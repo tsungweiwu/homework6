@@ -1,26 +1,56 @@
+echo 'diff ytestbanlog.txt'
 diff ytestbanlog.txt ytestbanlog.txt.bup
+
+echo 'diff ytestbrlog.txt'
 diff ytestbrlog.txt ytestbrlog.txt.bup
 
-#diff xlog4.txt xlog4.txt.bup
-#diff xout4.txt xout4.txt.bup
+echo 'diff zcountbylog.txt'
+diff ycountlog.txt zcountbylog.txt.bup
+
+echo 'diff zdatalog.txt'
+diff ydatalog.txt zdatalog.txt.bup
+
+echo 'diff zfiblog.txt'
+diff yfiblog.txt zfiblog.txt.bup
+
+echo 'diff zlooplog.txt'
+diff ylooplog.txt zlooplog.txt.bup
+
+echo 'diff zout1log.txt'
+diff xlog1.txt zout1log.txt.bup
+
+echo 'diff zout2log.txt'
+diff xlog2.txt zout2log.txt.bup
+
+echo 'diff zout3log.txt'
+diff xlog3.txt zout3log.txt.bup
+
+echo 'diff zout4log.txt'
+diff xlog4.txt zout4log.txt.bup
+
+echo 'diff zout5log.txt'
+diff xlog5.txt zout5log.txt.bup
+
+echo 'diff zout6log.txt'
+diff xlog6.txt zout6log.txt.bup
+
+
+
 ##
-#diff xlog5.txt xlog5.txt.bup
-#diff xout5.txt xout5.txt.bup
+
+
 ##
-#diff xlog6.txt xlog6.txt.bup
-#diff xout6.txt xout6.txt.bup
 ##
-#diff ydatalog.txt ydatalog.txt.bup
 #diff ydataout.txt ydataout.txt.bup
 ##
-#diff yfiblog.txt yfiblog.txt.bup
+
 #diff yfibout.txt yfibout.txt.bup
 ##
-#diff ylooplog.txt ylooplog.txt.bup
+
 #diff yloopout.txt yloopout.txt.bup
 ##
-#diff yreadwritelog.txt yreadwritelog.txt.bup
+
 #diff yreadwriteout.txt yreadwriteout.txt.bup
 ##
-#diff ysquareslog.txt ysquareslog.txt.bup
+
 #diff ysquaresout.txt ysquaresout.txt.bup

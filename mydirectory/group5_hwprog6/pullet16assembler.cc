@@ -73,7 +73,7 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
     input.read(buffer, 1);           // read one character
     unsigned char c2 = *buffer;      // dereference
     // Convert the characters back to a decimal
-    int bin_to_dec = c1*256;
+    int bin_to_dec = c1 * 256;
     int16_t bin_16 = bin_to_dec + c2;
     string bin_to_bitstring = DABnamespace::DecToBitString(bin_16, 16);
     // dumps to text file
