@@ -5,8 +5,9 @@
  * Class 'Assembler' for assembling code.
  *
  * Author/copyright:  Duncan A. Buell.  All rights reserved.
- * Used with permission and modified by: Tsung Wei Wu
- * Date: 20 November 2018
+ * Used with permission and modified by: Group 5:
+   Tsung Wei Wu, Sean Wiig, Samyu Comandur, Mark Mcmurtury, Mayank Patel.
+ * Date: 4 December 2018
 **/
 
 /***************************************************************************
@@ -62,23 +63,24 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   std::ifstream input(binary_filename, std::ifstream::binary);
   
   if (input) {
-    input.seekg(0, input.end);
-    int length = input.tellg();
-    input.seekg(0, input.beg);
-
-    // Converted Binary to ascii
-    char buffer[2];
-    for (int i = 0; i < length/2; ++i) {
-      input.read(buffer, 2);
-      int16_t valueread = static_cast<int16_t>((buffer[1]) | (buffer[0] << 8));
-
-      string converted_binary = DABnamespace::DecToBitString(valueread, 16);
-
-      // dumps it into output text file
-      out_stream << converted_binary << endl;
-    }
+  input.seekg(0, input.end);
+  int length = input.tellg();
+  input.seekg(0, input.beg);
+  char* buffer = new char[1];
+  for (int i = 0; i < length/2 ; ++i) {
+    input.read(buffer, 1);           // read one character
+    unsigned char c1 = *buffer;      // dereference
+    input.read(buffer, 1);           // read one character
+    unsigned char c2 = *buffer;      // dereference
+    // Convert the characters back to a decimal
+    int bin_to_dec = c1*256;
+    int16_t bin_16 = bin_to_dec + c2;
+    string bin_to_bitstring = DABnamespace::DecToBitString(bin_16, 16);
+    // dumps to text file
+    out_stream << bin_to_bitstring << endl;
   }
-  input.close();
+input.close();
+}
 
 #ifdef EBUG
   Utils::log_stream << "leave Assemble" << endl;

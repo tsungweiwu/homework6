@@ -5,8 +5,9 @@
  * Class 'OneMemoryWord' as a container for one word of memory.
  *
  * Author/copyright:  Duncan A. Buell.  All rights reserved.
- * Used with permission and modified by: Tsung Wei Wu
- * Date: 20 November 2018
+ * Used with permission and modified by: Group 5:
+   Tsung Wei Wu, Sean Wiig, Samyu Comandur, Mark Mcmurtury, Mayank Patel.
+ * Date: 4 December 2018
  *
  * This exists almost entirely to allow the text of a function to indicate
  * what one is extracting from the 16 bit pattern that is a memory word,

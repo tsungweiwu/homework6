@@ -3,8 +3,9 @@
  * word of memory, which could be interpreted in several ways.
  *
  * Author/copyright:  Duncan A. Buell.  All rights reserved.
- * Used with permission and modified by: Tsung Wei Wu
- * Date: 20 November 2018
+ * Used with permission and modified by: Group 5:
+   Tsung Wei Wu, Sean Wiig, Samyu Comandur, Mark Mcmurtury, Mayank Patel.
+ * Date: 4 December 2018
 **/
 
 #ifndef ONEMEMORYWORD_H
