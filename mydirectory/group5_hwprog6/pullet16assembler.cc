@@ -269,15 +269,21 @@ void Assembler::PassTwo() {
         continue;
       }
       WriteMemory((*it).GetPC(), bitstring);
+      (*it).SetMachineCode(bitstring);  // for PrintCodeLine
     } else if ((*it).GetMnemonic() == "RD ") {
-      WriteMemory((*it).GetPC(), "111000000000001");
+      WriteMemory((*it).GetPC(), "1110000000000001");
+      (*it).SetMachineCode("1110000000000001");  // for PrintCodeLine
     } else if ((*it).GetMnemonic() == "STP") {
-      WriteMemory((*it).GetPC(), "111000000000010");
+      WriteMemory((*it).GetPC(), "1110000000000010");
+      (*it).SetMachineCode("1110000000000010");  // for PrintCodeLine
     } else if ((*it).GetMnemonic() == "WRT") {
-      WriteMemory((*it).GetPC(), "111000000000011");
+      WriteMemory((*it).GetPC(), "1110000000000011");
+      (*it).SetMachineCode("1110000000000011");  // for PrintCodeLine
     } else if ((*it).GetMnemonic() == "HEX") {
       WriteMemory((*it).GetPC(), DABnamespace::DecToBitString(
           (*it).GetHexObject().GetValue(), 16));
+      (*it).SetMachineCode(DABnamespace::DecToBitString(
+          (*it).GetHexObject().GetValue(), 16));  // for PrintCodeLine
     } else if ((*it).GetMnemonic() == "DS ") {
       WriteMemory((*it).GetPC() + 
           (*it).GetHexObject().GetValue() - 1, kDummyCodeA);
