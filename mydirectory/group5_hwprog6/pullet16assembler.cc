@@ -56,7 +56,11 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   PassTwo();
   PrintCodeLines();
   PrintSymbolTable();
-  PrintMachineCode(binary_filename, out_stream);
+  if (!has_an_error_ == true) {
+    PrintMachineCode(binary_filename, out_stream);
+  } else {
+    Utils::log_stream << "ERRORS EXIST:\nNO MACHINE CODE GENERATED:" << endl;
+  }
   //////////////////////////////////////////////////////////////////////////
   // Dump the results.
   // Reading Binary File
@@ -97,6 +101,8 @@ input.close();
 **/
 string Assembler::GetInvalidMessage(string leadingtext, string symbol) {
   string returnvalue = "";
+  has_an_error_ = true;
+  returnvalue = leadingtext + symbol + " IS INVALID\n";
   return returnvalue;
 }
 
@@ -110,7 +116,8 @@ string Assembler::GetInvalidMessage(string leadingtext, string symbol) {
 **/
 string Assembler::GetInvalidMessage(string leadingtext, Hex hex) {
   string returnvalue = "";
-
+  has_an_error_ = true;
+  returnvalue = leadingtext + hex.ToString() + " IS INVALID\n";
   return returnvalue;
 }
 
@@ -123,6 +130,8 @@ string Assembler::GetInvalidMessage(string leadingtext, Hex hex) {
 **/
 string Assembler::GetUndefinedMessage(string badtext) {
   string returnvalue = "";
+  has_an_error_ = true;
+  returnvalue = "\n***** ERROR -- SYMBOL " + badtext + " IS UNDEFINED\n";
   return returnvalue;
 }
 
@@ -145,7 +154,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
 #endif
   Utils::log_stream << "PASS ONE" << endl;
   // Unfinished code -Sean
-
+  found_end_statement_ = 0;
   string lbl = "";
   pc_in_assembler_ = 0;
   int linecounter_ = 0;
@@ -171,9 +180,15 @@ void Assembler::PassOne(Scanner& in_scanner) {
         if (symboltable_.count(label) == 0) {
           // add symbol to table if not already present
           symboltable_.insert({label, Symbol(label, pc_in_assembler_)});
+          if ((int)label[0] < 64 || (int)label[0] > 91) {
+             codeline.SetErrorMessages(GetInvalidMessage("\n***** ERROR: SYMBOL ", label));
+          }
         } else {
           // sets a flag for duplicate labels
           symboltable_.at(label).SetMultiply();
+          has_an_error_ = true;
+          string err = "\n***** ERROR: SYMBOL " + label + " IS MULTIPLY DEFINED\n";
+          codeline.SetErrorMessages(err);
         }
       } // end of if label
       mnemonic = line.substr(4, 3);  // getting mnemonic
@@ -191,15 +206,11 @@ void Assembler::PassOne(Scanner& in_scanner) {
       mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
       int jumpvalue = codeline.GetHexObject().GetValue();
       if (mnemonic == "ORG") {
-        if (jumpvalue > 4095 || jumpvalue < 0) {
-          Utils::log_stream << "Invalid ORG at line: " << linecounter_ << endl;
-        } else {
-        pc_in_assembler_ = jumpvalue;
-        }
+        if (!(jumpvalue > 4095 || jumpvalue < 0)) {
+          pc_in_assembler_ = jumpvalue; 
+        } 
       } else if (mnemonic == "DS ") {
-        if ( (jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1) {
-          Utils::log_stream << "Invalid DS at line: " << linecounter_ << endl;
-        } else {
+        if (!((jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1)) {
         pc_in_assembler_ += jumpvalue;
         }
       } else if (mnemonic != "END") {
@@ -256,6 +267,7 @@ void Assembler::PassTwo() {
                                                 (*it).GetSymOperand());
       // The last twelve digits are defined by the symbol or the hex operand,
       // unless it's RD or STP or WRT
+
       if (sym_it != symboltable_.end()) {
         symbol = symboltable_.find((*it).GetSymOperand())-> second;
         bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
@@ -264,7 +276,9 @@ void Assembler::PassTwo() {
             (*it).GetHexObject().GetValue(), 12);
       } else {
         //to do: The symbol is not found in the symbol table 
-        Utils::log_stream << "Symbol not in table at " << (*it).GetPC() << endl;
+        // Utils::log_stream << "Symbol not in table at " << (*it).GetPC() << endl;
+        string err = GetUndefinedMessage((*it).GetSymOperand());
+        (*it).SetErrorMessages(err);
         continue;
       }
       WriteMemory((*it).GetPC(), bitstring);
@@ -295,7 +309,24 @@ void Assembler::PassTwo() {
     } else if ((*it).GetMnemonic() == "END") {
       bitstring = kDummyCodeD;
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
+    } else {
+      (*it).SetErrorMessages(GetInvalidMessage("\n***** ERROR -- MNEMONIC ", (*it).GetMnemonic()));
     }
+    int jumpvalue = (*it).GetHexObject().GetValue();
+      if ((*it).GetMnemonic() == "ORG") {
+        if (jumpvalue > 4095 || jumpvalue < 0) {
+          // Utils::log_stream << "Invalid ORG at line: " << linecounter_ << endl;
+          (*it).SetErrorMessages(GetInvalidMessage
+          ("\n***** ERROR -- ORG ALLOCATION ", (*it).GetHexObject()));
+
+        } 
+      } else if ((*it).GetMnemonic() == "DS ") {
+        if ( (jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1) {
+          (*it).SetErrorMessages(GetInvalidMessage
+          ("\n***** ERROR -- DS ALLOCATION ", (*it).GetHexObject()));
+        }
+      }
+
   }
   #ifdef EBUG
     Utils::log_stream << "leave PassTwo" << endl;

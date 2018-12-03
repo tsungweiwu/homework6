@@ -13,8 +13,8 @@ PASS ONE
 
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM IDX   4
-SYM TOP   0
+SYM IDX   4 MULTIPLY
+SYM TOP   0 MULTIPLY
 
 PASS TWO
     0                                           *23 567 9 123 56789 1
@@ -29,8 +29,8 @@ PASS TWO
 
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM IDX   4
-SYM TOP   0
+SYM IDX   4 MULTIPLY
+SYM TOP   0 MULTIPLY
 
 MACHINE CODE
 enter PrintMachineCode adotoutloop.bin
