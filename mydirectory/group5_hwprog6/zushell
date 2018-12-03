@@ -1,4 +1,4 @@
-#./Aprog ../../xin1source.txt        adotout1         	xlog1.txt
+./Aprog ../../xin1source.txt        adotout1         	xlog1.txt
 ./Aprog ../../xin2source.txt        adotout2         	xlog2.txt
 ./Aprog ../../xin3source.txt        adotout3         	xlog3.txt
 ./Aprog ../../xin4source.txt        adotout4         	xlog4.txt
