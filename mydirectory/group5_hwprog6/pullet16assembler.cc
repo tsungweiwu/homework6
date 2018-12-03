@@ -153,11 +153,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
   while (line != "") {
     codeline = CodeLine();  // creating object
     string mnemonic, label, addr, symoperand, hexoperand, comments, code;
-    mnemonic = "nullmnemonic";
-    label = "nulllabel";
-    symoperand = "nullsymoperand";
-    comments = "nullcomments";
-    code = "nullcode";
+
     if (line.length() < 21) {
       line.append(21-line.length(), ' ');  // pad to length 21, for easier code
     }
@@ -165,6 +161,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
       // set beginning lines of comments
       codeline.SetCommentsOnly(linecounter_, line);
       // set machine code to null for the comments
+      code = "nullcode";
       codeline.SetMachineCode(code);
     } else {
       if (line.substr(0, 3) != "   ") {  // reading label
