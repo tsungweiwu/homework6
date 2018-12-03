@@ -85,7 +85,7 @@ PASS TWO
    32   27  000000011011 0000 0000 0010 1000 STO    HEX       +0028 * address in SSS at which to store
    33   28  000000011100 1100 1100 1100 1100        ORG       +0028 * set PC location for SSS at +0020 
    34   40  000000101000 1100 1100 1100 1100 SSS    DS        +0010 
-   35   56  000000111000 1100 1100 1100 1100        END       ..... 
+   35   56  000000111000 0000 0000 1111 0000        END       ..... 
 
 SYMBOL TABLE
     SYM LOC FLAGS

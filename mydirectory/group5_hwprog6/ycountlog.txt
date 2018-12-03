@@ -54,7 +54,7 @@ PASS TWO
    18   13  000000001101 1111 1111 1111 1011 CTR    HEX       -0005 * counter for the loop
    19   14  000000001110 0000 0000 0000 0010 ICR    HEX       +0002 * increment
    20   15  000000001111 0000 0000 0000 0001 ONE    HEX       +0001 * we need a constant 1
-   21   16  000000010000 1100 1100 1100 1100        END       ..... 
+   21   16  000000010000 0000 0000 1111 0000        END       ..... 
 
 SYMBOL TABLE
     SYM LOC FLAGS
