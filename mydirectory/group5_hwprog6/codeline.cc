@@ -14,7 +14,7 @@
 **/
 CodeLine::CodeLine() {
 }
-//CodeLine::CodeLine(Globals globals) {
+// CodeLine::CodeLine(Globals globals) {
 //  globals_ = globals;
 //}
 
@@ -153,7 +153,7 @@ void CodeLine::SetCodeLine(int linecounter, int pc, string label,
  *   line - the code line that is taken to be all comments
 **/
 void CodeLine::SetCommentsOnly(int linecounter, string line) {
-  comments_ = line; // assume asterisk was not stripped already
+  comments_ = line;  // assume asterisk was not stripped already
   is_all_comment_ = true;
   linecounter_ = linecounter;
 }
@@ -212,11 +212,10 @@ string CodeLine::ToString() const {
   if (code_ == "nullcode") {
     s += Utils::Format("xxxx xxxx xxxx xxxx", 19);
   } else {
-    s += Utils::Format(code_.substr(0,4), 4)
-      + " " + Utils::Format(code_.substr(4,4), 4)
-      + " " + Utils::Format(code_.substr(8,4), 4)
-      + " " + Utils::Format(code_.substr(12,4), 4);
-    
+    s += Utils::Format(code_.substr(0, 4), 4)
+      + " " + Utils::Format(code_.substr(4, 4), 4)
+      + " " + Utils::Format(code_.substr(8, 4), 4)
+      + " " + Utils::Format(code_.substr(12, 4), 4);
   }
 
   if (label_ == "nulllabel") {
