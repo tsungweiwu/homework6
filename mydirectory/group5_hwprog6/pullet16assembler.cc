@@ -263,23 +263,14 @@ void Assembler::PassTwo() {
       // unless it's RD or STP or WRT
       map <string, Symbol>::iterator sym_it = symboltable_.find(
                                                 (*it).GetSymOperand());
-      // If symbol is in symboltable, check its error flags
+      // If symbol is in symboltable use it to complete bitstring
       if (sym_it != symboltable_.end()) {
         symbol = sym_it -> second;
-        if (symbol.IsInvalid()) {
-          err += GetInvalidMessage("SYMBOL '" 
-              + symbol.ToString().substr(0,3) + "\'");
-        }
-        if (symbol.IsMultiply()) {
-          err += GetMultiplyMessage("SYMBOL '"
-                + symbol.ToString().substr(0,3) + "\'");
-        }
         bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
       }
       // If there was no match in the symboltable, check if the codeline has
       // a symbol. If it does then it's an undefined symbol.
       else if ((*it).HasSymOperand()) {
-        err += GetUndefinedMessage("\'" +(*it).GetSymOperand() + "\'");
         bitstring = kDummyCodeC;
       }
       // If there's no symbol, check for a hex operand.
@@ -337,14 +328,35 @@ void Assembler::PassTwo() {
       err += GetInvalidMessage("MNEMONIC '" + (*it).GetMnemonic() + "\'");
     }
 
-    // Finally, check the label for its error flags
+    // Check hex value's error status
+    if (hex.HasAnError()) {
+      err += hex.GetErrorMessages();
+    }
+
+    //Check Label for its error flags
     if ((*it).HasLabel()) {
       Symbol label = symboltable_.find((*it).GetLabel()) -> second;
       if (label.IsInvalid()) {
-        err += GetInvalidMessage("LABEL '" + label.ToString().substr(0,3) + "\'");
+        err += GetInvalidMessage("LABEL '" + (*it).GetLabel() + "\'");
       }
       if (label.IsMultiply()) {
-        err += GetMultiplyMessage("LABEL '" + label.ToString().substr(0,3) + "\'");
+        err += GetMultiplyMessage("LABEL '" + (*it).GetLabel() + "\'");
+      }
+    }
+
+    // Finally, check the symoperand for its error flags
+    if ((*it).HasSymOperand()) {
+      auto sym_it = symboltable_.find((*it).GetSymOperand());
+      if (sym_it == symboltable_.end()) {
+        err += GetUndefinedMessage("\'" + (*it).GetSymOperand() + "\'");
+      } else {
+        symbol = sym_it -> second;
+        if (symbol.IsInvalid()) {
+          err += GetInvalidMessage("SYMBOL '" + (*it).GetSymOperand() + "\'");
+        }
+        if (symbol.IsMultiply()) {
+          err += GetMultiplyMessage("SYMBOL '" + (*it).GetSymOperand() + "\'");
+        }
       }
     }
 

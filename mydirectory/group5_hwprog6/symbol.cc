@@ -84,7 +84,8 @@ bool Symbol::CheckInvalid() const {
   bool returnvalue = true;  // false means no, not invalid
   if ( ((int)text_[0] > 64 && (int)text_[0] < 91) &&
        (isalnum(text_[1]) || text_[1] == ' ') && 
-       (isalnum(text_[2]) || text_[2] == ' ')
+       (isalnum(text_[2]) || text_[2] == ' ') &&
+      !(text_[1] == ' ' && text_[2] != ' ')
       ) {
     returnvalue = false;
   }
