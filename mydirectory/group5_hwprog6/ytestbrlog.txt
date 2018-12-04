@@ -18,9 +18,9 @@ PASS ONE
 
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM A     8 MULTIPLY
-SYM B     9 MULTIPLY
-SYM SKP   5 MULTIPLY
+SYM A     8
+SYM B     9
+SYM SKP   5
 
 PASS TWO
     0                                           *23 567 9 123 56789 1
@@ -40,9 +40,9 @@ PASS TWO
 
 SYMBOL TABLE
     SYM LOC FLAGS
-SYM A     8 MULTIPLY
-SYM B     9 MULTIPLY
-SYM SKP   5 MULTIPLY
+SYM A     8
+SYM B     9
+SYM SKP   5
 
 MACHINE CODE
 enter PrintMachineCode adotouttestbr.bin

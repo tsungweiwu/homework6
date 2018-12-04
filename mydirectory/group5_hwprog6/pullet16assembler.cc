@@ -65,7 +65,7 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
   // Dump the results.
   // Reading Binary File
   std::ifstream input(binary_filename, std::ifstream::binary);
-  
+
   if (input) {
   input.seekg(0, input.end);
   int length = input.tellg();
@@ -158,6 +158,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
   string lbl = "";
   pc_in_assembler_ = 0;
   int linecounter_ = 0;
+  has_an_error_ = false;
   CodeLine codeline;
   // obtaining the next line read
   string line = in_scanner.NextLine();
@@ -207,8 +208,8 @@ void Assembler::PassOne(Scanner& in_scanner) {
       int jumpvalue = codeline.GetHexObject().GetValue();
       if (mnemonic == "ORG") {
         if (!(jumpvalue > 4095 || jumpvalue < 0)) {
-          pc_in_assembler_ = jumpvalue; 
-        } 
+          pc_in_assembler_ = jumpvalue;
+        }
       } else if (mnemonic == "DS ") {
         if (!((jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1)) {
         pc_in_assembler_ += jumpvalue;
@@ -242,7 +243,6 @@ void Assembler::PassTwo() {
   Utils::log_stream << "PASS TWO" << endl;
   string bitstring = "";
   Symbol symbol;
-// Note: this code does not handle ORG, DS, END correctly yet
 // This block goes through each of the inputted codelines and converts the
 // mnemonic, direct/indirect addressing, and 12 bit address to appropriate
 // machine code.
@@ -275,7 +275,7 @@ void Assembler::PassTwo() {
         bitstring += DABnamespace::DecToBitString(
             (*it).GetHexObject().GetValue(), 12);
       } else {
-        //to do: The symbol is not found in the symbol table 
+        //to do: The symbol is not found in the symbol table
         // Utils::log_stream << "Symbol not in table at " << (*it).GetPC() << endl;
         string err = GetUndefinedMessage((*it).GetSymOperand());
         (*it).SetErrorMessages(err);
@@ -301,7 +301,7 @@ void Assembler::PassTwo() {
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
     } else if ((*it).GetMnemonic() == "DS ") {
-      WriteMemory((*it).GetPC() + 
+      WriteMemory((*it).GetPC() +
           (*it).GetHexObject().GetValue() - 1, kDummyCodeA);
       WriteMemory((*it).GetPC(), kDummyCodeC);
     } else if ((*it).GetMnemonic() == "ORG") {
@@ -319,7 +319,7 @@ void Assembler::PassTwo() {
           (*it).SetErrorMessages(GetInvalidMessage
           ("\n***** ERROR -- ORG ALLOCATION ", (*it).GetHexObject()));
 
-        } 
+        }
       } else if ((*it).GetMnemonic() == "DS ") {
         if ( (jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1) {
           (*it).SetErrorMessages(GetInvalidMessage
@@ -393,7 +393,7 @@ for (auto iter = memory_.begin(); iter != memory_.end(); ++iter) {
       data[1] = static_cast<char>((ascii_16));
       // writes the binary to file
       output.write(data, 2);
-  } // end of if (output) 
+  } // end of if (output)
 } // end of for loop
 output.close();
 Utils::log_stream << s << endl;
