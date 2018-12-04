@@ -183,7 +183,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
           // sets a flag for duplicate labels
           symboltable_.at(label).SetMultiply();
         }
-      } // end of if label
+      }  // end of if label
       mnemonic = line.substr(4, 3);  // getting mnemonic
       addr = line.substr(8, 1);  // getting addr
       if (line.substr(10, 3) != "   ") {
@@ -212,7 +212,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
 
       if (mnemonic == "END") {
         found_end_statement_ = true;
-      } // end of if statement END
+      }  // end of if statement END
     }  // end of else statement
     linecounter_++;
     codelines_.push_back(codeline);
@@ -241,7 +241,7 @@ void Assembler::PassTwo() {
 // mnemonic, direct/indirect addressing, and 12 bit address to appropriate
 // machine code.
   for (auto it = codelines_.begin(); it != codelines_.end(); it++) {
-    //If the line is a comment, then ignore
+    // If the line is a comment, then ignore
     if ((*it).IsAllComment()) {
       continue;
     }
@@ -267,31 +267,25 @@ void Assembler::PassTwo() {
       if (sym_it != symboltable_.end()) {
         symbol = sym_it -> second;
         bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
-      }
-      // If there was no match in the symboltable, check if the codeline has
-      // a symbol. If it does then it's an undefined symbol.
-      else if ((*it).HasSymOperand()) {
+      } else if ((*it).HasSymOperand()) {
+        // If there was no match in the symboltable, check if the codeline has
+        // a symbol. If it does then it's an undefined symbol.
         bitstring = kDummyCodeC;
-      }
-      // If there's no symbol, check for a hex operand.
-      else if (!hex.IsNull()) {
+      } else if (!hex.IsNull()) {  // If no symbol, check for a hex operand.
         if (hex.GetValue() < 0 || hex.GetValue() > 4095) {
           err += GetInvalidMessage("HEX OPERAND " + hex.GetText());
         } else {
           bitstring += DABnamespace::DecToBitString(hex.GetValue(), 12);
         }
-      }
-      // If there was no hex or symbol
-      else {
+      } else {  // If there was no hex or symbol
         err += "\n***** ERROR -- NO HEX OR SYMBOL OPERAND";
         bitstring = kDummyCodeC;
       }
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
-    }
-    // If the mnemonic wasn't in the map of opcodes,
-    // check the other possible opcodes.
-    else if ((*it).GetMnemonic() == "RD ") {
+    } else if ((*it).GetMnemonic() == "RD ") {
+      // check the other possible opcodes.
+      // If the mnemonic wasn't in the map of opcodes,
       bitstring = "1110000000000001";
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
@@ -309,7 +303,7 @@ void Assembler::PassTwo() {
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
     } else if ((*it).GetMnemonic() == "DS ") {
-      if ( (hex.GetValue() + pc_in_assembler_) > 4095 || hex.GetValue() < 1) {
+      if ((hex.GetValue() + pc_in_assembler_) > 4095 || hex.GetValue() < 1) {
         err += GetInvalidMessage("DS ALLOCATION "+ hex.GetText());
       } else {
         WriteMemory((*it).GetPC() +
@@ -333,7 +327,7 @@ void Assembler::PassTwo() {
       err += hex.GetErrorMessages();
     }
 
-    //Check Label for its error flags
+    // Check Label for its error flags
     if ((*it).HasLabel()) {
       Symbol label = symboltable_.find((*it).GetLabel()) -> second;
       if (label.IsInvalid()) {
@@ -402,7 +396,6 @@ void Assembler::PrintMachineCode(string binary_filename,
   Utils::log_stream << "enter PrintMachineCode" << " "
                     << binary_filename << endl;
 #endif
-string s = "";
 // WILL CHANGE THIS TO BE READING THE BINARY MACHINE CODE LATER BUT FOR NOW
 // JUST DUMPING THE ASCII THAT WE HAVE
 // to do find a way to do that kDummyCodeA thing in the middle !!!
@@ -413,13 +406,14 @@ Utils::log_stream << "MACHINE CODE\n"
 std::ofstream output(binary_filename, std::ofstream::binary);
 int count = 0;
 for (auto iter = memory_.begin(); iter != memory_.end(); ++iter) {
-  s += Utils::Format(count, 4) + " ";
-  s += DABnamespace::DecToBitString(count, 12) + " ";
-  s += (*iter).GetBitPattern().substr(0, 4) + " ";
-  s += (*iter).GetBitPattern().substr(4, 4) + " ";
-  s += (*iter).GetBitPattern().substr(8, 4) + " ";
-  s += (*iter).GetBitPattern().substr(12, 4) + '\n';
+  Utils::log_stream << Utils::Format(count, 4) << " "
+  << DABnamespace::DecToBitString(count, 12) << " "
+  << (*iter).GetBitPattern().substr(0, 4) << " "
+  << (*iter).GetBitPattern().substr(4, 4) << " "
+  << (*iter).GetBitPattern().substr(8, 4) << " "
+  << (*iter).GetBitPattern().substr(12, 4) << "\n";
   count++;
+
   if (output) {
     int16_t ascii_16 = DABnamespace::BitStringToDec((*iter).GetBitPattern());
     char data[4];
@@ -427,10 +421,9 @@ for (auto iter = memory_.begin(); iter != memory_.end(); ++iter) {
       data[1] = static_cast<char>((ascii_16));
       // writes the binary to file
       output.write(data, 2);
-  } // end of if (output)
-} // end of for loop
+  }  // end of if (output)
+}  // end of for loop
 output.close();
-Utils::log_stream << s << endl;
 #ifdef EBUG
   Utils::log_stream << "leave PrintMachineCode" << endl;
 #endif
@@ -445,16 +438,14 @@ void Assembler::PrintSymbolTable() {
   Utils::log_stream << "enter PrintSymbolTable" << endl;
 #endif
 
-string s = "";
 Utils::log_stream << "SYMBOL TABLE\n    SYM LOC FLAGS\n";
 for (std::pair<string, Symbol> it : symboltable_) {
   Utils::log_stream << "SYM " << it.second.ToString() << endl;
 }
-
+  Utils::log_stream << endl;
 #ifdef EBUG
   Utils::log_stream << "leave PrintSymbolTable" << endl;
 #endif
-  Utils::log_stream << s << endl;
 }
 
 /******************************************************************************
@@ -497,7 +488,7 @@ void Assembler::WriteMemory(int pc, string code) {
   for (int i = memory_.size(); i < pc; i++) {
     memory_.push_back(OneMemoryWord(kDummyCodeA));
   }
-  if ((int)memory_.size() == pc) {
+  if (static_cast<int>(memory_.size()) == pc) {
     memory_.push_back(OneMemoryWord(code));
   } else {
     memory_.at(pc) = OneMemoryWord(code);
