@@ -28,9 +28,10 @@ class Symbol {
   Symbol(string symboltext, int programcounter);
   virtual ~Symbol();
 
-  string GetErrorMessages() const;
   int GetLocation() const;
   bool HasAnError() const;
+  bool IsInvalid() const;
+  bool IsMultiply() const;
   void SetMultiply();
   string ToString() const;
 
@@ -38,7 +39,6 @@ class Symbol {
   int location_;
   bool is_multiply_;
   bool is_invalid_;
-  string error_messages_;
   string text_;
 
   bool CheckInvalid() const;

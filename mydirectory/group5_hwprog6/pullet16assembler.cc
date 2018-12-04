@@ -96,28 +96,12 @@ input.close();
  * This creates a "value is invalid" error message.
  *
  * Parameters:
- *   leadingtext - the text of what it is that is invalid
- *   symbol - the symbol that is invalid
+ *   errortext - whatever it is that is invalid
 **/
-string Assembler::GetInvalidMessage(string leadingtext, string symbol) {
+string Assembler::GetInvalidMessage(string errortext) {
   string returnvalue = "";
   has_an_error_ = true;
-  returnvalue = leadingtext + symbol + " IS INVALID\n";
-  return returnvalue;
-}
-
-/***************************************************************************
- * Function 'GetInvalidMessage'.
- * This creates a "value is invalid" error message.
- *
- * Parameters:
- *   leadingtext - the text of what it is that is invalid
- *   hex - the hex operand that is invalid
-**/
-string Assembler::GetInvalidMessage(string leadingtext, Hex hex) {
-  string returnvalue = "";
-  has_an_error_ = true;
-  returnvalue = leadingtext + hex.ToString() + " IS INVALID\n";
+  returnvalue = "\n***** ERROR -- " + errortext + " IS INVALID";
   return returnvalue;
 }
 
@@ -126,12 +110,26 @@ string Assembler::GetInvalidMessage(string leadingtext, Hex hex) {
  * This creates a "symbol is undefined" error message.
  *
  * Parameters:
- *   badtext - the undefined symbol text
+ *   errortext - the undefined symbol text
 **/
-string Assembler::GetUndefinedMessage(string badtext) {
+string Assembler::GetUndefinedMessage(string errortext) {
   string returnvalue = "";
   has_an_error_ = true;
-  returnvalue = "\n***** ERROR -- SYMBOL " + badtext + " IS UNDEFINED\n";
+  returnvalue = "\n***** ERROR -- SYMBOL " + errortext + " IS UNDEFINED";
+  return returnvalue;
+}
+
+/***************************************************************************
+ * Function 'GetMultiplyMessage'.
+ * This creates a "value is multiply defined" error message.
+ *
+ * Parameters:
+ *   errortext - the symbol that is invalid
+**/
+string Assembler::GetMultiplyMessage(string errortext) {
+  string returnvalue = "";
+  has_an_error_ = true;
+  returnvalue = "\n***** ERROR -- " + errortext + " IS MULTIPLY DEFINED";
   return returnvalue;
 }
 
@@ -181,15 +179,9 @@ void Assembler::PassOne(Scanner& in_scanner) {
         if (symboltable_.count(label) == 0) {
           // add symbol to table if not already present
           symboltable_.insert({label, Symbol(label, pc_in_assembler_)});
-          if ((int)label[0] < 64 || (int)label[0] > 91) {
-             codeline.SetErrorMessages(GetInvalidMessage("\n***** ERROR: SYMBOL ", label));
-          }
         } else {
           // sets a flag for duplicate labels
           symboltable_.at(label).SetMultiply();
-          has_an_error_ = true;
-          string err = "\n***** ERROR: SYMBOL " + label + " IS MULTIPLY DEFINED\n";
-          codeline.SetErrorMessages(err);
         }
       } // end of if label
       mnemonic = line.substr(4, 3);  // getting mnemonic
@@ -242,48 +234,73 @@ void Assembler::PassTwo() {
 #endif
   Utils::log_stream << "PASS TWO" << endl;
   string bitstring = "";
+  string err;
   Symbol symbol;
+  Hex hex;
 // This block goes through each of the inputted codelines and converts the
 // mnemonic, direct/indirect addressing, and 12 bit address to appropriate
 // machine code.
   for (auto it = codelines_.begin(); it != codelines_.end(); it++) {
-    // The first block looks for the mnemonic in the map
-    // of opcodes, and converts to machine code accordingly.
+    //If the line is a comment, then ignore
     if ((*it).IsAllComment()) {
       continue;
     }
+    hex = (*it).GetHexObject();
+    err = "";
+    // The first block looks for the mnemonic in the map
+    // of opcodes, and converts to machine code accordingly.
     map <string, string>::iterator op_it = opcodes.find((*it).GetMnemonic());
     if (op_it != opcodes.end()) {
       bitstring = opcodes.find((*it).GetMnemonic())-> second;
-      // The second block looks for the
-      // asterisk to determine whether the 4th bit
-      // should be denoted as direct or indirect addressing.
+      // check for the asterisk to determine the addressing bit
       if ((*it).GetAddr() == "*") {
         bitstring += "1";
       } else {
         bitstring += "0";
       }
-      map <string, Symbol>::iterator sym_it = symboltable_.find(
-                                                (*it).GetSymOperand());
+
       // The last twelve digits are defined by the symbol or the hex operand,
       // unless it's RD or STP or WRT
-
+      map <string, Symbol>::iterator sym_it = symboltable_.find(
+                                                (*it).GetSymOperand());
+      // If symbol is in symboltable, check its error flags
       if (sym_it != symboltable_.end()) {
-        symbol = symboltable_.find((*it).GetSymOperand())-> second;
+        symbol = sym_it -> second;
+        if (symbol.IsInvalid()) {
+          err += GetInvalidMessage("SYMBOL '" 
+              + symbol.ToString().substr(0,3) + "\'");
+        }
+        if (symbol.IsMultiply()) {
+          err += GetMultiplyMessage("SYMBOL '"
+                + symbol.ToString().substr(0,3) + "\'");
+        }
         bitstring += DABnamespace::DecToBitString(symbol.GetLocation(), 12);
-      } else if (!(*it).GetHexObject().IsNull()) {
-        bitstring += DABnamespace::DecToBitString(
-            (*it).GetHexObject().GetValue(), 12);
-      } else {
-        //to do: The symbol is not found in the symbol table
-        // Utils::log_stream << "Symbol not in table at " << (*it).GetPC() << endl;
-        string err = GetUndefinedMessage((*it).GetSymOperand());
-        (*it).SetErrorMessages(err);
-        continue;
+      }
+      // If there was no match in the symboltable, check if the codeline has
+      // a symbol. If it does then it's an undefined symbol.
+      else if ((*it).HasSymOperand()) {
+        err += GetUndefinedMessage("\'" +(*it).GetSymOperand() + "\'");
+        bitstring = kDummyCodeC;
+      }
+      // If there's no symbol, check for a hex operand.
+      else if (!hex.IsNull()) {
+        if (hex.GetValue() < 0 || hex.GetValue() > 4095) {
+          err += GetInvalidMessage("HEX OPERAND " + hex.GetText());
+        } else {
+          bitstring += DABnamespace::DecToBitString(hex.GetValue(), 12);
+        }
+      }
+      // If there was no hex or symbol
+      else {
+        err += "\n***** ERROR -- NO HEX OR SYMBOL OPERAND";
+        bitstring = kDummyCodeC;
       }
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
-    } else if ((*it).GetMnemonic() == "RD ") {
+    }
+    // If the mnemonic wasn't in the map of opcodes,
+    // check the other possible opcodes.
+    else if ((*it).GetMnemonic() == "RD ") {
       bitstring = "1110000000000001";
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
@@ -301,32 +318,37 @@ void Assembler::PassTwo() {
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
     } else if ((*it).GetMnemonic() == "DS ") {
-      WriteMemory((*it).GetPC() +
-          (*it).GetHexObject().GetValue() - 1, kDummyCodeA);
-      WriteMemory((*it).GetPC(), kDummyCodeC);
+      if ( (hex.GetValue() + pc_in_assembler_) > 4095 || hex.GetValue() < 1) {
+        err += GetInvalidMessage("DS ALLOCATION "+ hex.GetText());
+      } else {
+        WriteMemory((*it).GetPC() +
+            (*it).GetHexObject().GetValue() - 1, kDummyCodeA);
+        WriteMemory((*it).GetPC(), kDummyCodeC);
+      }
     } else if ((*it).GetMnemonic() == "ORG") {
-      //nothing needs to be done
+      if (hex.GetValue() > 4095 || hex.GetValue() < 0) {
+        err += GetInvalidMessage("ORG ALLOCATION " + hex.GetText());
+      }
     } else if ((*it).GetMnemonic() == "END") {
       bitstring = kDummyCodeD;
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
     } else {
-      (*it).SetErrorMessages(GetInvalidMessage("\n***** ERROR -- MNEMONIC ", (*it).GetMnemonic()));
+      // If everything failed to match, then the mnemonic is not valid.
+      err += GetInvalidMessage("MNEMONIC '" + (*it).GetMnemonic() + "\'");
     }
-    int jumpvalue = (*it).GetHexObject().GetValue();
-      if ((*it).GetMnemonic() == "ORG") {
-        if (jumpvalue > 4095 || jumpvalue < 0) {
-          // Utils::log_stream << "Invalid ORG at line: " << linecounter_ << endl;
-          (*it).SetErrorMessages(GetInvalidMessage
-          ("\n***** ERROR -- ORG ALLOCATION ", (*it).GetHexObject()));
 
-        }
-      } else if ((*it).GetMnemonic() == "DS ") {
-        if ( (jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1) {
-          (*it).SetErrorMessages(GetInvalidMessage
-          ("\n***** ERROR -- DS ALLOCATION ", (*it).GetHexObject()));
-        }
+    // Finally, check the label for its error flags
+    if ((*it).HasLabel()) {
+      Symbol label = symboltable_.find((*it).GetLabel()) -> second;
+      if (label.IsInvalid()) {
+        err += GetInvalidMessage("LABEL '" + label.ToString().substr(0,3) + "\'");
       }
+      if (label.IsMultiply()) {
+        err += GetMultiplyMessage("LABEL '" + label.ToString().substr(0,3) + "\'");
+      }
+    }
 
+    (*it).SetErrorMessages(err);
   }
   #ifdef EBUG
     Utils::log_stream << "leave PassTwo" << endl;

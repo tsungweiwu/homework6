@@ -70,9 +70,9 @@ class Assembler {
                                 };
   set<string> mnemonics_;
 
-  string GetInvalidMessage(string leadingtext, string invalidstring);
-  string GetInvalidMessage(string leadingtext, Hex hex);
-  string GetUndefinedMessage(string badtext);
+  string GetInvalidMessage(string errortext);
+  string GetUndefinedMessage(string errortext);
+  string GetMultiplyMessage(string errortext);
   void PassOne(Scanner& in_scanner);
   void PassTwo();
   void PrintCodeLines();

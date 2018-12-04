@@ -261,7 +261,7 @@ string CodeLine::ToString() const {
 
   if ((error_messages_.length() > 0) &&
       (error_messages_ != "nullerrormessages")) {
-    s += error_messages_;
+    s += error_messages_ + "\n";
   }
 
 #ifdef EBUG

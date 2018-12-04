@@ -23,6 +23,7 @@ Symbol::Symbol(string text, int programcounter) {
   text_ = text;
   location_ = programcounter;
   is_invalid_ = CheckInvalid();
+  is_multiply_ = false;
 }
 
 /******************************************************************************
@@ -36,16 +37,6 @@ Symbol::~Symbol() {
 **/
 
 /******************************************************************************
- * Accessor for 'error_messages_'.
-**/
-string Symbol::GetErrorMessages() const {
-  bool previouserror = false;
-  string error_messages = "";
-
-  return error_messages;
-} // I wonder what this is for?
-
-/******************************************************************************
  * Accessor for the 'location_'.
 **/
 int Symbol::GetLocation() const {
@@ -57,6 +48,20 @@ int Symbol::GetLocation() const {
 **/
 bool Symbol::HasAnError() const {
   return (is_invalid_ || is_multiply_);
+}
+
+/******************************************************************************
+ * Returns true if the symbol is invalid.
+**/
+bool Symbol::IsInvalid() const {
+  return is_invalid_;
+}
+
+/*****************************************************************************
+ * Returns true if the symbol is multiply defined.
+**/
+bool Symbol::IsMultiply() const {
+  return is_multiply_;
 }
 
 /******************************************************************************
@@ -77,9 +82,9 @@ void Symbol::SetMultiply() {
 **/
 bool Symbol::CheckInvalid() const {
   bool returnvalue = true;  // false means no, not invalid
-  if ( isalpha(text_[0]) &&
-      (isalnum(text_[1]) || text_[1] == ' ') && 
-      (isalnum(text_[2]) || text_[2] == ' ')
+  if ( ((int)text_[0] > 64 && (int)text_[0] < 91) &&
+       (isalnum(text_[1]) || text_[1] == ' ') && 
+       (isalnum(text_[2]) || text_[2] == ' ')
       ) {
     returnvalue = false;
   }
