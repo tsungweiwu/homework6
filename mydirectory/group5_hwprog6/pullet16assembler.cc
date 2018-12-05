@@ -153,12 +153,13 @@ void Assembler::PassOne(Scanner& in_scanner) {
   found_end_statement_ = 0;
   string lbl = "";
   pc_in_assembler_ = 0;
+  maxpc_ = 4096;
   int linecounter_ = 0;
   has_an_error_ = false;
   CodeLine codeline;
   // obtaining the next line read
   string line = in_scanner.NextLine();
-  while (line != "") {
+  while (line != "" && pc_in_assembler_ < maxpc_) {
     codeline = CodeLine();  // creating object
     string mnemonic, label, addr, symoperand, hexoperand, comments, code;
 
