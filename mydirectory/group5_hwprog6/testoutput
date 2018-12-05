@@ -1,0 +1,55 @@
+echo 'diff adotouttestbr.txt'
+diff adotouttestbr.txt ../../adotouttestbr.txt
+echo 'diff adotouttestbr.bin'
+diff adotouttestbr.bin ../../adotouttestbr.bin
+
+echo 'diff adotout4.txt'
+diff adotout4.txt ../../adotout4.txt
+echo 'diff adotout4.bin'
+diff adotout4.bin ../../adotout4.bin
+
+echo 'diff adotout5.txt'
+diff adotout5.txt ../../adotout5.txt
+echo 'diff adotout5.bin'
+diff adotout5.bin ../../adotout5.bin
+
+echo 'diff adotout6.txt'
+diff adotout6.txt ../../adotout6.txt
+echo 'diff adotout6.bin'
+diff adotout6.bin ../../adotout6.bin
+
+echo 'diff adotoutdata.txt'
+diff adotoutdata.txt ../../adotoutdata.txt
+echo 'diff adotoutdata.bin'
+diff adotoutdata.bin ../../adotoutdata.bin
+
+echo 'diff adotoutfib.txt'
+diff adotoutfib.txt ../../adotoutfib.txt
+echo 'diff adotoutfib.bin'
+diff adotoutfib.bin ../../adotoutfib.bin
+
+echo 'diff adotoutloop.txt'
+diff adotoutloop.txt ../../adotoutloop.txt
+echo 'diff adotoutloop.bin'
+diff adotoutloop.bin ../../adotoutloop.bin
+
+echo 'diff adotoutreadwrite.txt'
+diff adotoutreadwrite.txt ../../adotoutreadwrite.txt
+echo 'diff adotoutreadwrite.bin'
+diff adotoutreadwrite.bin ../../adotoutreadwrite.bin
+
+echo 'diff adotoutsquares.txt'
+diff adotoutsquares.txt ../../adotoutsquares.txt
+echo 'diff adotoutsquares.bin'
+diff adotoutsquares.bin ../../adotoutsquares.bin
+
+echo 'diff adotouttestadd.txt'
+diff adotouttestadd.txt ../../adotouttestadd.txt
+echo 'diff adotouttestadd.bin'
+diff adotouttestadd.bin ../../adotouttestadd.bin
+
+echo 'diff adotout4.txt'
+diff adotout4.txt ../../adotout4.txt
+echo 'diff adotout4.bin'
+diff adotout4.bin ../../adotout4.bin
+
