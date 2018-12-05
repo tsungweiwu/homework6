@@ -81,7 +81,7 @@ void Assembler::Assemble(Scanner& in_scanner, string binary_filename,
     string bin_to_bitstring = DABnamespace::DecToBitString(bin_16, 16);
     // dumps to adotout text file
     out_stream << bin_to_bitstring << endl;
-  } // end of for loop
+  }  // end of for loop
 input.close();
 }
 
@@ -184,7 +184,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
       }  // end of if label
       mnemonic = line.substr(4, 3);  // getting mnemonic
       addr = line.substr(8, 1);  // getting addr
-      if (line.substr(10, 3) != "   ") { // getting symbol
+      if (line.substr(10, 3) != "   ") {  // getting symbol
         // if field is empty, value of symoperand_ will be null
         symoperand = line.substr(10, 3);
       }  // end of if symbol
@@ -278,7 +278,7 @@ void Assembler::PassTwo() {
       } else {  // If there was no hex or symbol
         err += "\n***** ERROR -- NO HEX OR SYMBOL OPERAND";
         bitstring = kDummyCodeC;
-      } // end of else
+      }  // end of else
       WriteMemory((*it).GetPC(), bitstring);  // for PrintMachineCode
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
     } else if ((*it).GetMnemonic() == "RD ") {
