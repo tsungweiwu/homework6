@@ -177,7 +177,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
         label = line.substr(0, 3);
         if (symboltable_.count(label) == 0) {  // checks for duplicate
           // add symbol to table if not already present
-          symboltable_.insert({label, Symbol(label, pc_in_assembler_)});
+          UpdateSymbolTable(pc_in_assembler_, label);
         } else {  // else found duplicate symbol
           symboltable_.at(label).SetMultiply();  // sets multiply flag
         }  // end else
@@ -195,41 +195,12 @@ void Assembler::PassOne(Scanner& in_scanner) {
       // sends all the data for it to be assigned
       codeline.SetCodeLine(linecounter_, pc_in_assembler_, label,
       mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
-
-      // this block of code handles the program counter. It increments
-      // by one, unless the mnemonic is DS or ORG or END
-      int jumpvalue = codeline.GetHexObject().GetValue();
-
-      // ORG simply overwrites the pc value for the future instructions
-      if (mnemonic == "ORG") {
-        if (!(jumpvalue > 4095 || jumpvalue < 0)) {
-          pc_in_assembler_ = jumpvalue;
-        }
-      // DS adds a certain amount to the pc value
-      } else if (mnemonic == "DS ") {
-        if (!((jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1)) {
-          pc_in_assembler_ += jumpvalue;
-        }
-      // the END statement shouldn't change the pc counter because the END
-      // statement does not create machine code
-      } else if (mnemonic != "END") {
-        pc_in_assembler_++;
-      }
-=======
-          pc_in_assembler_ = jumpvalue;  // ORG to hex value
-        }  // end of if ORG
-      } else if (mnemonic == "DS ") {
-        if (!((jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1)) {
-        pc_in_assembler_ += jumpvalue;  // DS to hex value
-        }  // end of if DS
-      } else if (mnemonic != "END") {
-        pc_in_assembler_++;  // PC increases after every instr
-      }  // end of if END
->>>>>>> 816bca1012cc11cd36a7956c6ffaea35a8b56ffe
+      
+      SetNewPC(codeline);
 
       if (mnemonic == "END") {
-        found_end_statement_ = true;  // found end which sets has_error false
-      }  // end of if statement END
+        found_end_statement_ = true;
+      }
     }  // end of else statement
     linecounter_++;
     codelines_.push_back(codeline);
@@ -491,6 +462,26 @@ void Assembler::SetNewPC(CodeLine codeline) {
   Utils::log_stream << "enter SetNewPC" << endl;
 #endif
 
+      // the following code handles the program counter. It increments
+      // by one, unless the mnemonic is DS or ORG or END
+      int jumpvalue = codeline.GetHexObject().GetValue();
+
+      // ORG simply overwrites the current pc value
+      if (codeline.GetMnemonic() == "ORG") {
+        if (!(jumpvalue > 4095 || jumpvalue < 0)) {
+          pc_in_assembler_ = jumpvalue;
+        }
+      // DS adds a certain amount to the pc value
+      } else if (codeline.GetMnemonic() == "DS ") {
+        if (!((jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1)) {
+          pc_in_assembler_ += jumpvalue;
+        }
+      // the END statement shouldn't change the pc counter because it
+      // does not create machine code or take space in memory
+      } else if (codeline.GetMnemonic() != "END") {
+        pc_in_assembler_++;
+      }
+
 #ifdef EBUG
   Utils::log_stream << "leave SetNewPC" << endl;
 #endif
@@ -499,14 +490,13 @@ void Assembler::SetNewPC(CodeLine codeline) {
 /******************************************************************************
  * Function 'UpdateSymbolTable'.
  * This function updates the symbol table for a putative symbol.
- * Note that there is a hack here, in that the default value is 0
- * and that would mean we can't store a symbol at location zero.
- * So we add one, and then back that out after the full first pass is done.
 **/
 void Assembler::UpdateSymbolTable(int pc, string symboltext) {
 #ifdef EBUG
   Utils::log_stream << "enter UpdateSymbolTable" << endl;
 #endif
+
+  symboltable_.insert({symboltext, Symbol(symboltext, pc_in_assembler_)});
 
 #ifdef EBUG
   Utils::log_stream << "leave UpdateSymbolTable" << endl;
@@ -515,7 +505,9 @@ void Assembler::UpdateSymbolTable(int pc, string symboltext) {
 
 /******************************************************************************
  * Function 'WriteMemory'.
- * This function updates
+ * This function writes a given bitcode to somewhere in memory. It writes the
+ * filler values when DS or ORG statements place new instructions in a remote
+ * location in memory.
 **/
 void Assembler::WriteMemory(int pc, string code) {
   for (int i = memory_.size(); i < pc; i++) {
