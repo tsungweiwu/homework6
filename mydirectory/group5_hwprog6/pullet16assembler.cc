@@ -195,7 +195,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
       // sends all the data for it to be assigned
       codeline.SetCodeLine(linecounter_, pc_in_assembler_, label,
       mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
-      
+
       SetNewPC(codeline);
 
       if (mnemonic == "END") {
@@ -271,13 +271,12 @@ void Assembler::PassTwo() {
       }  // end of else
       WriteMemory((*it).GetPC(), bitstring);  // for PrintMachineCode
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
-    }
       // check the other possible opcodes.
       // If the mnemonic wasn't in the map of opcodes,
       //
       // RD and STP and WRT were omitted from the opcode_ map, because
       // they are not handled like the others. They are handled here.
-    else if ((*it).GetMnemonic() == "RD ") {
+    } else if ((*it).GetMnemonic() == "RD ") {
       bitstring = "1110000000000001";
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
@@ -294,10 +293,9 @@ void Assembler::PassTwo() {
           (*it).GetHexObject().GetValue(), 16);
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
-    }
+    } else if ((*it).GetMnemonic() == "DS ") {
       // Here in the DS block we check to make sure the operand is valid
       // and doesn't run out of allowed memory.
-    else if ((*it).GetMnemonic() == "DS ") {
       if ((hex.GetValue() + pc_in_assembler_) > 4095 || hex.GetValue() < 1) {
         err += GetInvalidMessage("DS ALLOCATION "+ hex.GetText());
       } else {
@@ -305,11 +303,10 @@ void Assembler::PassTwo() {
             (*it).GetHexObject().GetValue() - 1, kDummyCodeA);
         WriteMemory((*it).GetPC(), kDummyCodeC);
       }
-    }
+    } else if ((*it).GetMnemonic() == "ORG") {
       // this ORG block doesn't do anything other than check for an invalid
       // operand. The function of ORG was already handled in PassOne by
       // setting the pc_ value
-    else if ((*it).GetMnemonic() == "ORG") {
       if (hex.GetValue() > 4095 || hex.GetValue() < 0) {
         err += GetInvalidMessage("ORG ALLOCATION " + hex.GetText());
       }  // end of if ORG
