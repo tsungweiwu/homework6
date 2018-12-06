@@ -151,7 +151,6 @@ void Assembler::PassOne(Scanner& in_scanner) {
   Utils::log_stream << "enter PassOne" << endl;
 #endif
   Utils::log_stream << "PASS ONE" << endl;
-  // Unfinished code -Sean
   found_end_statement_ = 0;
   string lbl = "";
   pc_in_assembler_ = 0;
@@ -186,7 +185,7 @@ void Assembler::PassOne(Scanner& in_scanner) {
       }  // end of if label
       mnemonic = line.substr(4, 3);  // getting mnemonic
       addr = line.substr(8, 1);  // getting addr
-      if (line.substr(10, 3) != "   ") {
+      if (line.substr(10, 3) != "   ") { // reading symbol field
         // if field is empty, value of symoperand_ will be null
         symoperand = line.substr(10, 3);
       }  // end of if symbol
@@ -197,18 +196,26 @@ void Assembler::PassOne(Scanner& in_scanner) {
       // sends all the data for it to be assigned
       codeline.SetCodeLine(linecounter_, pc_in_assembler_, label,
       mnemonic, addr, symoperand, hexoperand, comments, kDummyCodeA);
+
+      // this block of code handles the program counter. It increments
+      // by one, unless the mnemonic is DS or ORG or END
       int jumpvalue = codeline.GetHexObject().GetValue();
+
+      // ORG simply overwrites the pc value for the future instructions
       if (mnemonic == "ORG") {
         if (!(jumpvalue > 4095 || jumpvalue < 0)) {
           pc_in_assembler_ = jumpvalue;
         }
+      // DS adds a certain amount to the pc value
       } else if (mnemonic == "DS ") {
         if (!((jumpvalue + pc_in_assembler_) > 4095 || jumpvalue < 1)) {
-        pc_in_assembler_ += jumpvalue;
+          pc_in_assembler_ += jumpvalue;
         }
+      // the END statement shouldn't change the pc counter because the END
+      // statement does not create machine code
       } else if (mnemonic != "END") {
         pc_in_assembler_++;
-      }  // end of if END
+      }
 
       if (mnemonic == "END") {
         found_end_statement_ = true;
@@ -283,9 +290,13 @@ void Assembler::PassTwo() {
       }
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
-    } else if ((*it).GetMnemonic() == "RD ") {
+    }
       // check the other possible opcodes.
       // If the mnemonic wasn't in the map of opcodes,
+      //
+      // RD and STP and WRT were omitted from the opcode_ map, because
+      // they are not handled like the others. They are handled here.
+    else if ((*it).GetMnemonic() == "RD ") {
       bitstring = "1110000000000001";
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
@@ -302,7 +313,10 @@ void Assembler::PassTwo() {
           (*it).GetHexObject().GetValue(), 16);
       WriteMemory((*it).GetPC(), bitstring);
       (*it).SetMachineCode(bitstring);  // for PrintCodeLine
-    } else if ((*it).GetMnemonic() == "DS ") {
+    }
+      // Here in the DS block we check to make sure the operand is valid
+      // and doesn't run out of allowed memory.
+    else if ((*it).GetMnemonic() == "DS ") {
       if ((hex.GetValue() + pc_in_assembler_) > 4095 || hex.GetValue() < 1) {
         err += GetInvalidMessage("DS ALLOCATION "+ hex.GetText());
       } else {
@@ -310,7 +324,11 @@ void Assembler::PassTwo() {
             (*it).GetHexObject().GetValue() - 1, kDummyCodeA);
         WriteMemory((*it).GetPC(), kDummyCodeC);
       }
-    } else if ((*it).GetMnemonic() == "ORG") {
+    }
+      // this ORG block doesn't do anything other than check for an invalid
+      // operand. The function of ORG was already handled in PassOne by
+      // setting the pc_ value
+    else if ((*it).GetMnemonic() == "ORG") {
       if (hex.GetValue() > 4095 || hex.GetValue() < 0) {
         err += GetInvalidMessage("ORG ALLOCATION " + hex.GetText());
       }
@@ -354,6 +372,9 @@ void Assembler::PassTwo() {
       }
     }
 
+    if ((*it).GetPC() > 4095 || (*it).GetPC() < 0) {
+      err += "\n***** ERROR -- PC OUT OF BOUNDS\n";
+    }
     (*it).SetErrorMessages(err);
   }
   #ifdef EBUG
@@ -484,6 +505,10 @@ void Assembler::UpdateSymbolTable(int pc, string symboltext) {
 #endif
 }
 
+/******************************************************************************
+ * Function 'WriteMemory'.
+ * This function updates
+**/
 void Assembler::WriteMemory(int pc, string code) {
   for (int i = memory_.size(); i < pc; i++) {
     memory_.push_back(OneMemoryWord(kDummyCodeA));
