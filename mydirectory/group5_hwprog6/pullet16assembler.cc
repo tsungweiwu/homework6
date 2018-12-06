@@ -496,7 +496,7 @@ void Assembler::UpdateSymbolTable(int pc, string symboltext) {
   Utils::log_stream << "enter UpdateSymbolTable" << endl;
 #endif
 
-  symboltable_.insert({symboltext, Symbol(symboltext, pc_in_assembler_)});
+  symboltable_.insert({symboltext, Symbol(symboltext, pc)});
 
 #ifdef EBUG
   Utils::log_stream << "leave UpdateSymbolTable" << endl;
